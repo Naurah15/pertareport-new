@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>Review Produk</title>
+<style>
+    body, h1, h2, p {
+        color: #AB886D; /* Ganti dengan warna coklat yang diinginkan */
+    }
+    .btn-add-review {
+        background-color: #AB886D; /* Warna coklat untuk tombol */
+        color: white; /* Warna teks tombol */
+    }
+    .btn-add-review:hover {
+        background-color: #493628; /* Warna saat hover */
+    }
+    .divider {
+        margin: 1.5rem 0; /* Jarak atas dan bawah untuk divider */
+        height: 2px; /* Tinggi divider */
+        background-color: #AB886D; /* Warna coklat untuk divider */
+        border-radius: 5px; /* Sudut membulat untuk divider */
+        width: 50%; /* Lebar divider */
+        margin-left: auto; /* Memusatkan divider */
+        margin-right: auto; /* Memusatkan divider */
+    }
+    /* Styling untuk select */
+    .select-order {
+        border: 1px solid #AB886D;  /* Warna coklat tua */
+        border-radius: 5px;
+        padding: 0.5rem;
+        background-color: #AB886D; 
+        color: white; /* Warna coklat tua untuk teks */
+        margin-left: 0.5rem;
+        font-weight: bold; /* Mencetak tebal */
+    }
+    /* Styling untuk wrapper urutkan */
+    .order-wrapper {
+        display: flex; /* Menggunakan flexbox */
+        justify-content: center; /* Memusatkan konten secara horizontal */
+        align-items: center; /* Memusatkan konten secara vertikal */
+        margin-bottom: 1rem; /* Jarak bawah */
+    }
+    /* Styling untuk teks urutkan */
+    .order-label {
+        font-weight: bold; /* Mencetak tebal */
+        margin-right: 0.5rem; /* Jarak antara teks dan select */
+    }
+</style>
+{% endblock meta %}
+
+{% block content %}
+{% include 'navbar.html' %}
+
+<div class="py-20 bg-white">
+    <h1 class="text-4xl font-bold text-center mb-10">{{ product.nama }}'s Review</h1> 
+
+    <div class="divider"></div>
+
+    <div class="order-wrapper">
+        <span class="order-label">Urutkan:</span>
+        <form method="get" action="">
+            <select name="order" class="select-order" onchange="this.form.submit()">
+                <option value="newest" {% if order == 'newest' %}selected{% endif %}>Terbaru</option>
+                <option value="oldest" {% if order == 'oldest' %}selected{% endif %}>Terlama</option>
+            </select>
+        </form>
+    </div>
+
+    <!-- Container untuk review -->
+    <div class="max-w-3xl mx-auto bg-white shadow-lg p-6 rounded-lg">
+        {% for review in reviews %}
+        <div class="border-b border-gray-300 py-6 flex space-x-4">
+            <div class="flex-1">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-lg font-semibold">{{ review.user.username }}</h2>
+                    <span class="text-sm text-gray-500">{{ review.time|date:"F j, Y, g:i a" }}</span>
+                </div>
+                <p class="mt-2 text-gray-700">{{ review.review_text }}</p>
+                <div class="mt-4 flex justify-end">
+                    <form method="post" action="{% url 'review:delete_review' review.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-add-review px-4 py-2 rounded-md transition duration-300">
+                            Delete
+                        </button>
+                    </form>
+                    </div>
+            </div>
+        </div>
+        {% empty %}
+            <p class="text-gray-600 text-center">Belum ada ulasan untuk produk ini.</p>
+        {% endfor %}        
+    </div>
+
+    <div class="flex justify-center space-x-4 mt-8">
+        <a href="{% url 'review:add_review' product.pk %}" class="btn-add-review px-4 py-2 rounded-md transition duration-300">
+            Add Review
+        </a>
+        <a href="{% url 'bookmark:add_bookmark' product.pk %}" class="btn-add-review px-4 py-2 rounded-md transition duration-300">
+            Bookmark
+        </a>
+    </div>
+    
+</div>
+
+{% endblock content %}

@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+{% include 'navbar.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookmarked Products</title>
+    <style>
+        body {
+            {% comment %} background-image: url("{% static 'images/background.png' %}"); {% endcomment %}
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: #3e2723;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            background-color: #F8F4F0;
+        }
+
+        h1 {
+            text-align: center;
+            color: #4e342e;
+            padding: 20px;
+            background-color: #f7efe4;
+            font-size: 2.5rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            border-bottom: 4px solid #a1887f;
+            margin-top: 65px;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            padding: 50px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #fffdf9;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-card {
+            background-color: #fdf8f4;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            text-align: center;
+            border: 1px solid #d7ccc8;
+            position: relative;
+            padding-bottom: 20px;
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 2px solid #a1887f;
+        }
+
+        .product-details {
+            padding: 20px;
+            background-color: #fff8f2;
+        }
+
+        .product-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #3e2723;
+            margin: 15px 0 5px;
+        }
+
+        .category, .price, .restaurant, .location {
+            color: #5d4037;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .btn-remove {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: transparent;
+            color: red;
+            font-size: 2.3rem;
+            line-height: 1;
+            border: 1;
+            cursor: pointer;
+            padding: 0 8px;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+        .sidebar-title {
+            margin-top: 100px;
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--dark-text);
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .sidebar-title::after {
+            content: '';
+            width: 80px;
+            height: 4px;
+            background-color: #AF8F6F;
+            display: block;
+            margin: 10px auto 0;
+            border-radius: 2px;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color:  #AF8F6F;
+            margin-bottom: 40px;
+            font-style: italic;
+        }
+
+    </style>
+</head>
+<body>
+    {% comment %} <h1>Bookmarked Products</h1> {% endcomment %}
+    
+    <h2 class="sidebar-title">Bookmarks</h2>
+    <p class="subtitle">Berikut adalah product favorit anda!</p>
+
+    <div class="product-grid">
+        {% if bookmarked_products %}
+            {% for product in bookmarked_products %}
+                <div class="product-card">
+                    <a href="{% url 'bookmark:remove_bookmark' product.pk %}" data-id="{{ product.pk }}" class="btn-remove" title="Remove Bookmark">&times;</a>
+                    {% if product.url_gambar %}
+                        <img src="{{ product.url_gambar }}" alt="Gambar produk {{ product.nama }}">
+                    {% else %}
+                        <img src="https://via.placeholder.com/250x200" alt="Gambar tidak tersedia">
+                    {% endif %}
+                    <div class="product-details">
+                        <p class="product-name">{{ product.nama }}</p>
+                        <p class="category">Kategori: {{ product.kategori }}</p>
+                        <p class="price">Harga: IDR {{ product.harga }}</p>
+                        <p class="restaurant">Restoran: {{ product.nama_restoran }}</p>
+                        <p class="location">Lokasi: {{ product.lokasi }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p style="text-align: center; color: #000000; font-size: 1.2rem;">No bookmarked products found.</p>
+        {% endif %}
+    </div>
+</body>
+</html>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.btn-remove').forEach(button => {
+            button.addEventListener('click', function (event) {
+                event.preventDefault();  // Mencegah reload halaman
+                const productId = button.getAttribute('data-id');  // Ambil ID produk
+
+                fetch(`{% url 'bookmark:remove_bookmark' 0 %}`.replace('0', productId), {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',  // Kirim token CSRF
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({product_id: productId})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        button.closest('.product-card').remove();  // Hapus card produk
+                    } else {
+                        alert('Gagal menghapus produk dari bookmark.');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+    });
+</script>
+{% include 'footer.html' %}
+{% endblock content %}

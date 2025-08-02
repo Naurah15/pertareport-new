@@ -1,0 +1,287 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+{% include 'navbar.html' %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Produk Rasa Jogja</title>
+    <style>
+        /* Basic styles for the page */
+        body {
+            background-color: #F8F4F0; /* Soft gray background */
+            margin: 0;
+            padding: 0;
+            color: #3e2723; /* Dark brown for readability */
+            overflow-x: hidden;
+        }
+
+        h1 {
+            margin-top: 80px;
+            text-align: center;
+            color: #4e342e; /* Rich brown for title */
+            padding: 20px;
+            background-color: #f7efe4; /* Soft cream background */
+            font-size: 2.5rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            border-bottom: 4px solid #a1887f; /* Elegant brown accent underline */
+        }
+
+        /* Filter container styling */
+        .filter-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            padding: 20px;
+            background-color: white; /* Light cream background */
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            margin-bottom: 30px;
+            align-items: center;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        /* Styling for dropdowns */
+        .filter-container label {
+            color: #4e342e; /* Rich brown for label text */
+            font-weight: normal;
+            margin-right: 5px;
+        }
+
+        .filter-container select {
+            padding: 10px 15px;
+            font-size: 1rem;
+            color: #4e342e;
+            background-color: #fff8f2; /* Creamy background for dropdown */
+            border: 1px solid #d7ccc8; /* Light brown border */
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-container select:hover {
+            background-color: #fdf8f4; /* Slightly darker cream on hover */
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .filter-container select:focus {
+            outline: none;
+            border-color: #a1887f; /* Focused border color */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Styling for the product grid */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            padding: 50px 20px;
+            margin: 0 auto;
+            max-width: 1200px;
+            background-color: #fffdf9; /* Light modern background inside the grid */
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Softer shadow for elegance */
+        }
+
+        /* Styling for each product card */
+        .product-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background-color: #fdf8f4; /* Soft cream background */
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-align: center;
+            border: 1px solid #d7ccc8;
+            min-height: 450px;
+            padding-bottom: 20px;
+        }
+
+        .product-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Ensures all images are uniform */
+        .product-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 2px solid #a1887f;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .product-card:hover img {
+            transform: scale(1.1);
+        }
+
+        /* Product details styling */
+        .product-details {
+            padding: 20px;
+            background-color: #fff8f2; /* Light cream for readability */
+            flex-grow: 1;
+        }
+
+        .product-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #3e2723; /* Dark brown for name */
+            margin: 15px 0 5px;
+        }
+
+        .category {
+            color: #795548; /* Warm brown for category */
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+
+        .price {
+            color: #8d6e63; /* Muted brown for price */
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .restaurant,
+        .location {
+            color: #5d4037;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        /* Bookmark button styling */
+        .bookmark-btn {
+            background-color: transparent;
+            border: none;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5rem;
+            color: rgb(255, 255, 255); 
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .product-link {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .sidebar-title {
+            margin-top: 100px;
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--dark-text);
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .sidebar-title::after {
+            content: '';
+            width: 80px;
+            height: 4px;
+            background-color: #AF8F6F;
+            display: block;
+            margin: 10px auto 0;
+            border-radius: 2px;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color:  #AF8F6F;
+            margin-bottom: 40px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+   
+    {% comment %} <h1>Daftar Produk Rasa Jogja</h1> {% endcomment %}
+    <h2 class="sidebar-title">Daftar Product RasaJogja</h2>
+    <p class="subtitle">Berikut adalah kuliner yang bisa anda nikmati!</p>
+    
+    <!-- Filter Kategori dan Harga -->
+    <div class="filter-container">
+        <label for="categoryFilter">Filter Kategori:</label>
+        <select id="categoryFilter" onchange="applyFilters()">
+            <option value="all">Semua Kategori</option>
+            <option value="Makanan">Makanan</option>
+            <option value="Minuman">Minuman</option>
+            <option value="Camilan">Camilan</option>
+            <option value="Makanan Penutup">Makanan Penutup</option>
+        </select>
+
+        <label for="priceFilter">Urutkan Harga:</label>
+        <select id="priceFilter" onchange="applyFilters()">
+            <option value="">Pilih</option> <!-- Default option without sorting -->
+            <option value="asc">Harga Terendah ke Tertinggi</option>
+            <option value="desc">Harga Tertinggi ke Terendah</option>
+        </select>
+    </div>
+
+    <div class="product-grid" id="productGrid">
+        {% for product in products %}
+        <div class="product-card" data-category="{{ product.fields.kategori }}" data-price="{{ product.fields.harga }}">
+            <a href="{% url 'review:show_review' product.pk %}" class="product-link">
+                {% if product.fields.url_gambar %}
+                    <img src="{{ product.fields.url_gambar }}" alt="Gambar {{ product.fields.nama }}">
+                {% else %}
+                    <img src="https://via.placeholder.com/250x200" alt="Gambar tidak tersedia">
+                {% endif %}
+                <div class="product-details">
+                    <p class="product-name">{{ product.fields.nama }}</p>
+                    <p class="category">Kategori: {{ product.fields.kategori }}</p>
+                    <p class="price">Harga: IDR {{ product.fields.harga }}</p>
+                    <p class="restaurant">Restoran: {{ product.fields.nama_restoran }}</p>
+                    <p class="location">Lokasi: {{ product.fields.lokasi }}</p>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        const bookmarkedProducts = new Set('{{ user_bookmarks|safe }}');
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            bookmarkedProducts.forEach(productId => {
+                const bookmarkButton = document.getElementById(`bookmark-${productId}`);
+                if (bookmarkButton) {
+                    bookmarkButton.style.color = "#ffff00"; // Warna bookmark aktif
+                }
+            });
+        });
+
+        function applyFilters() {
+            const categoryFilter = document.getElementById("categoryFilter").value;
+            const priceFilter = document.getElementById("priceFilter").value;
+            const productGrid = document.getElementById("productGrid");
+            const productCards = Array.from(productGrid.getElementsByClassName("product-card"));
+
+            productCards.forEach(card => {
+                const productCategory = card.getAttribute("data-category");
+                const productPrice = parseFloat(card.getAttribute("data-price"));
+
+                const categoryMatch = categoryFilter === "all" || categoryFilter === productCategory;
+                const priceMatch = true;
+
+                card.style.display = categoryMatch && priceMatch ? "block" : "none";
+            });
+        }
+    </script>
+</body>
+</html>
+{% include 'footer.html' %}
+{% endblock %}

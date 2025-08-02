@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+    {% include 'navbar.html' %}
+
+    <!-- Menambahkan Font dari Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
+    <div class="content-container">
+        <!-- Form Section -->
+        <section class="form-section">
+            <h2 class="form-title">Buat Entri Forum Baru</h2>
+            <p class="form-subtitle">Bagikan pertanyaan atau topik Anda dengan komunitas kami</p>
+
+            <div class="form-container">
+                <form method="POST" class="forum-form">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}
+                                <p class="form-help">{{ field.help_text }}</p>
+                            {% endif %}
+                            {% for error in field.errors %}
+                                <p class="form-error">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary form-submit">
+                        <i class="fas fa-paper-plane"></i> Kirim Entri
+                    </button>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <!-- Font Awesome untuk Ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <style>
+        /* CSS Variables */
+        :root {
+            --primary-color: #AF8F6F;
+            --secondary-color: #8C6B4F;
+            --accent-color: #C19A6B;
+            --light-bg: #F8F4F0;
+            --light-text: #ffffff;
+            --dark-text: #4B2E1D;
+            --medium-text: #AF8F6F;
+            --tag-bg: #E5D4C0;
+            --tag-hover-bg: #D6C3AF;
+            --alert-success-bg: #DFF2BF;
+            --alert-success-text: #4F8A10;
+            --alert-error-bg: #FFBABA;
+            --alert-error-text: #D8000C;
+        }
+
+        /* Global Styles */
+        body {
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--accent-color);
+            text-decoration: underline;
+        }
+
+        /* Content Container */
+        .content-container {
+            width: 90%;
+            max-width: 800px;
+            margin: 80px auto 40px;
+            padding: 0 20px;
+        }
+
+        /* Form Section */
+        .form-section {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--dark-text);
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .form-subtitle {
+            font-size: 1.2rem;
+            color: var(--medium-text);
+            text-align: center;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .forum-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--dark-text);
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--medium-text);
+            border-radius: 8px;
+            font-size: 1rem;
+            color: var(--dark-text);
+            background-color: #ffffff;
+            resize: vertical;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 8px rgba(175, 143, 111, 0.5);
+            outline: none;
+        }
+
+        .form-help {
+            font-size: 0.9rem;
+            color: var(--medium-text);
+            margin-top: 5px;
+        }
+
+        .form-error {
+            font-size: 0.9rem;
+            color: var(--alert-error-text);
+            margin-top: 5px;
+        }
+
+        .form-submit {
+            align-self: center;
+            padding: 12px 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            background-color: var(--primary-color);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-submit:hover {
+            background-color: #9E7A5E;
+            transform: translateY(-3px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .content-container {
+                margin: 60px auto 30px;
+            }
+
+            .form-section {
+                padding: 30px;
+            }
+        }
+    </style>
+{% endblock %}

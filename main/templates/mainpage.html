@@ -1,0 +1,241 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block meta %}
+<title>Rasa Jogja</title>
+<style>
+  .dot.active {
+    background-color: #ffa452; /* Active dot color */
+    width: 12px;
+    height: 12px;
+  }
+  body {
+    background-color: #F8F4F0;
+  }
+</style>
+{% endblock meta %}
+
+{% block content %}
+{% include 'navbar.html' %}
+
+<!-- Spacer Div -->
+<div class="h-16"></div> <!-- Adjust height as needed -->
+
+<div class="w-full max-w-screen-lg mx-auto p-4 md:py-6">
+    <div class="overflow-x-hidden rounded-[15px] px-4 md:px-6 pb-6 pt-12 min-h-[60vh] bg-[#fffaf5] flex flex-col">
+        <!-- Image Slider -->
+        <div class="relative w-full h-[300px] overflow-hidden rounded-[15px] mb-6">
+            <div class="slider-wrapper flex transition-transform duration-500 ease-in-out" id="slider">
+                <!-- Slide 1 -->
+                <div class="min-w-full h-full">
+                    <img src="{% static 'images/rasajogja.PNG' %}" alt="Slide 1" class="object-cover w-full h-full">
+                </div>
+                <!-- Slide 2 -->
+                <div class="min-w-full h-full">
+                    <img src="{% static 'images/jogja_1.jpeg' %}" alt="Slide 2" class="object-cover w-full h-full">
+                </div>
+                <!-- Slide 3 -->
+                <div class="min-w-full h-full">
+                    <img src="{% static 'images/jogja_3.jpeg' %}" alt="Slide 3" class="object-cover w-full h-full">
+                </div>
+            </div>
+
+            <!-- Slider Dots -->
+            <div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-2" id="dots-container">
+                <div class="dot w-2 h-2 rounded-full bg-gray-300 cursor-pointer" data-index="0"></div>
+                <div class="dot w-2 h-2 rounded-full bg-gray-300 cursor-pointer" data-index="1"></div>
+                <div class="dot w-2 h-2 rounded-full bg-gray-300 cursor-pointer" data-index="2"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="w-full max-w-screen-xl mx-auto p-4 md:py-8 flex justify-center gap-x-4">
+    <div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow :bg-gray-800 :border-gray-700">
+        <a href="#">
+            <img class="rounded-t-lg" src="{% static 'images/slider4.jpg' %}" alt="" />
+        </a>
+        <div class="p-5">
+            <a href="{% url 'katalog:main_view' %}">
+                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 :text-white">Temukan Makanan dan Minuman Khas Jogja</h5>
+            </a>
+            <p class="mb-3 font-normal text-gray-700 :text-gray-400">Tidak hanya menjadi panduan kuliner, RasaJogja juga menjadi jembatan yang menghubungkan pengguna dengan kekayaan budaya kuliner Jogjakarta.</p>
+            <a href="{% url 'katalog:main_view' %}" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-[#493628] rounded-lg hover:bg-[#D4BDAC] focus:ring-4 focus:outline-none focus:ring-[#D4BDAC] :bg-[#D4BDAC] :hover:bg-[#D4BDAC] :focus:ring-[#D4BDAC]">
+                Read more
+                <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                </svg>
+            </a>
+        </div>
+    </div>
+    
+    <div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow :bg-gray-800 :border-gray-700">
+        <a href="#">
+            <img class="rounded-t-lg" src="{% static 'images/slider5.jpg' %}" alt="" />
+        </a>
+        <div class="p-5">
+            <a href="{% url 'forum:show_main' %}">
+                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 :text-white">Nikmati yang Terbaik: Rekomendasi Favorit Pilihan Pengguna!</h5>
+            </a>
+            <p class="mb-3 font-normal text-gray-700 :text-gray-400">Nikmati hidangan yang paling diminati dan mendapatkan pengalaman kuliner yang tak terlupakan.</p>
+            <a href="{% url 'forum:show_main' %}" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-[#493628] rounded-lg hover:bg-[#D4BDAC] focus:ring-4 focus:outline-none focus:ring-[#D4BDAC] :bg-[#D4BDAC] :hover:bg-[#D4BDAC] :focus:ring-[#D4BDAC]">
+                Read more
+                <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                </svg>
+            </a>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="w-full max-w-screen-xl mx-auto p-4 md:py-8 flex justify-center gap-x-4">
+    <div class="w-full bg-white border border-gray-200 rounded-lg shadow :bg-gray-800 :border-gray-700">
+        <ul class="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 rounded-t-lg bg-gray-50 :border-gray-700 :text-gray-400 :bg-gray-800" id="defaultTab" data-tabs-toggle="#defaultTabContent" role="tablist">
+            <li class="me-2">
+                <button id="about-tab" data-tabs-target="#about" type="button" role="tab" aria-controls="about" aria-selected="true" class="inline-block p-4 text-[#493628] rounded-ss-lg hover:bg-gray-100 :bg-gray-800 :hover:bg-gray-700 :text-[#493628]">About</button>
+            </li>
+            <li class="me-2">
+                <button id="services-tab" data-tabs-target="#services" type="button" role="tab" aria-controls="services" aria-selected="false" class="inline-block p-4 hover:text-gray-600 hover:bg-gray-100 :hover:bg-gray-700 :hover:text-gray-300">Services</button>
+            </li>
+            <li class="me-2">
+                <button id="statistics-tab" data-tabs-target="#statistics" type="button" role="tab" aria-controls="statistics" aria-selected="false" class="inline-block p-4 hover:text-gray-600 hover:bg-gray-100 :hover:bg-gray-700 :hover:text-gray-300">Facts</button>
+            </li>
+        </ul>
+        <div id="defaultTabContent">
+            <div class="p-4 bg-white rounded-lg md:p-8 :bg-gray-800" id="about" role="tabpanel" aria-labelledby="about-tab">
+                <h2 class="mb-3 text-3xl font-extrabold tracking-tight text-gray-900 :text-white">RasaJogja</h2>
+                <p class="mb-3 text-gray-500 :text-gray-400">Nikmati Sensasi Jogja di Setiap Suapan: Temukan kekayaan rasa dan keaslian kuliner khas Yogyakarta yang begitu memikat. Dari manisnya Gudeg legendaris hingga Sate Klathak yang pedas dan khas, setiap hidangan membawa cerita budaya, sejarah, dan tradisi Jogja. Kami telah memilihkan hidangan terbaik untuk Anda, jadi biarkan lidah Anda merasakan kelezatan autentik dan nikmati perjalanan rasa yang tak terlupakan di kota ini.</p>
+                <a href="#" class="inline-flex items-center font-medium text-[#493628] hover:text-[#493628] :text-[#493628] :hover:text-[#493628]">
+                    Learn more
+                    <svg class="w-2.5 h-2.5 ms-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                    </svg>
+                </a>
+            </div>
+            <div class="hidden p-4 bg-white rounded-lg md:p-8 :bg-gray-800" id="services" role="tabpanel" aria-labelledby="services-tab">
+                <h2 class="mb-5 text-2xl font-extrabold tracking-tight text-gray-900 :text-white">RasaJogja: Jogja Dalam Satu Rasa</h2>
+                <ul role="list" class="space-y-4 text-gray-500 :text-gray-400">
+                    <li class="flex space-x-2 rtl:space-x-reverse items-center">
+                        <svg class="flex-shrink-0 w-3.5 h-3.5 text-[#493628] :text-[#493628]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+                        </svg>
+                        <span class="leading-tight">Kuliner</span>
+                    </li>
+                    <li class="flex space-x-2 rtl:space-x-reverse items-center">
+                        <svg class="flex-shrink-0 w-3.5 h-3.5 text-[#493628] :text-[#493628]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+                        </svg>
+                        <span class="leading-tight">Review</span>
+                    </li>
+                    <li class="flex space-x-2 rtl:space-x-reverse items-center">
+                        <svg class="flex-shrink-0 w-3.5 h-3.5 text-[#493628] :text-[#493628]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+                        </svg>
+                        <span class="leading-tight">Rekomendasi dan Forum</span>
+                    </li>
+                    <li class="flex space-x-2 rtl:space-x-reverse items-center">
+                        <svg class="flex-shrink-0 w-3.5 h-3.5 text-[#493628] :text-[#493628]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+                        </svg>
+                        <span class="leading-tight">Bookmark</span>
+                    </li>
+                    <li class="flex space-x-2 rtl:space-x-reverse items-center">
+                        <svg class="flex-shrink-0 w-3.5 h-3.5 text-[#493628] :text-[#493628]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+                        </svg>
+                        <span class="leading-tight">Chat</span>
+                    </li>
+                    <!-- Additional list items... -->
+                </ul>
+            </div>
+            <div class="hidden p-4 bg-white rounded-lg md:p-8 :bg-gray-800" id="statistics" role="tabpanel" aria-labelledby="statistics-tab">
+                <dl class="max-w-screen-xl gap-8 p-4 mx-auto text-gray-900 :text-white sm:p-8">
+                    <div class="flex flex-col">
+                        <h2 class="mb-3 text-3xl font-extrabold tracking-tight text-gray-900 :text-white">Developers</h2>
+                        <p class="mb-3 text-gray-500 :text-gray-400">Ardi - Clarissa - Diza - Naurah - Nelil</p>
+                    </div>
+                    <!-- Additional statistics... -->
+                </dl>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+
+<script>
+    const tabButtons = document.querySelectorAll('[data-tabs-target]');
+    const tabContents = document.querySelectorAll('[role="tabpanel"]');
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            tabButtons.forEach(btn => btn.classList.remove('text-[#493628]', ':text-[#493628]', 'bg-gray-100', ':bg-gray-800'));
+            tabContents.forEach(content => content.classList.add('hidden'));
+
+            button.classList.add('text-[#493628]', ':text-[#493628]', 'bg-gray-100', ':bg-gray-800');
+            const target = document.querySelector(button.getAttribute('data-tabs-target'));
+            target.classList.remove('hidden');
+        });
+    });
+
+</script> 
+
+<!-- Slider Script -->
+<!-- Slider Script -->
+<script>
+    const slider = document.getElementById('slider');
+    const slides = slider.children;
+    const totalSlides = slides.length;
+    const dotsContainer = document.getElementById('dots-container');
+    const dots = dotsContainer.children;
+    let currentIndex = 0;
+  
+    function updateSlider(index) {
+      slider.style.transform = `translateX(-${index * 100}%)`;
+      updateDots(index);
+    }
+  
+    function updateDots(index) {
+      for (let i = 0; i < dots.length; i++) {
+        dots[i].classList.remove('active');
+      }
+      dots[index].classList.add('active');
+    }
+  
+    for (let i = 0; i < dots.length; i++) {
+      dots[i].addEventListener('click', function() {
+        currentIndex = i;
+        updateSlider(currentIndex);
+      });
+    }
+  
+    // Automatically move the slider every 3 seconds
+    function autoSlide() {
+      currentIndex = (currentIndex + 1) % totalSlides; // Loop back to the first slide after the last one
+      updateSlider(currentIndex);
+    }
+    setInterval(autoSlide, 3000); // 3000ms = 3 seconds
+  
+    updateSlider(currentIndex);
+  </script>
+
+
+
+{% comment %} <a href="{% url 'main:logout' %}">
+    <button>Logout</button>
+</a>
+
+<a href="{% url 'katalog:main_view' %}">
+    <button>Product List</button>
+</a>
+
+<a href="{% url 'chat:create_chat' %}">
+    <button>Create Chat</button>
+</a> {% endcomment %}
+{% include 'footer.html' %}
+{% endblock content %}
