@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ("katalog", "0002_product_url_gambar"),
+        ("report", "0002_product_url_gambar"),
     ]
 
     operations = [
@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
                     "product",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        to="katalog.product",
+                        to="report.product",
                     ),
                 ),
                 (

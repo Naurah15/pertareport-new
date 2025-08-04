@@ -11,11 +11,11 @@ from django.conf import settings
 import os
 from django.http import JsonResponse
 
-from katalog.models import Product
+from report.models import Product
 
 def main_view(request):
     # Path ke file JSON
-    file_path = os.path.join(settings.BASE_DIR, 'katalog', 'fixtures', 'products.json')
+    file_path = os.path.join(settings.BASE_DIR, 'report', 'fixtures', 'products.json')
     
     # Memastikan file JSON ada
     if not os.path.exists(file_path):
@@ -34,7 +34,7 @@ def main_view(request):
 
 def get_products_json(request):
     # Path ke file JSON
-    file_path = os.path.join(settings.BASE_DIR, 'katalog', 'fixtures', 'products.json')
+    file_path = os.path.join(settings.BASE_DIR, 'report', 'fixtures', 'products.json')
     
     # Memastikan file JSON ada
     if not os.path.exists(file_path):

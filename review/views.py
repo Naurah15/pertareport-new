@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.decorators import login_required
 from review.models import ReviewEntry
-from katalog.models import Product
+from report.models import Product
 from review.forms import ReviewEntryForm
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages

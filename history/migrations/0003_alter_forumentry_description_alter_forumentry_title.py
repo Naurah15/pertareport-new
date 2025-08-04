@@ -6,17 +6,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("forum", "0002_forumentry_remove_thread_created_by_and_more"),
+        ("history", "0002_forumentry_remove_thread_created_by_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name="forumentry",
+            model_name="historyentry",
             name="description",
             field=models.TextField(default=None),
         ),
         migrations.AlterField(
-            model_name="forumentry",
+            model_name="historyentry",
             name="title",
             field=models.CharField(default=None, max_length=255),
         ),

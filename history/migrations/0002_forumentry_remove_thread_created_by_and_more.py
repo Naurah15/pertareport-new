@@ -10,12 +10,12 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ("forum", "0001_initial"),
+        ("history", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name="ForumEntry",
+            name="HistoryEntry",
             fields=[
                 (
                     "id",
@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.RemoveField(model_name="thread", name="created_by",),
-        migrations.RemoveField(model_name="thread", name="forum",),
+        migrations.RemoveField(model_name="thread", name="history",),
         migrations.RemoveField(model_name="comment", name="created_by",),
         migrations.RemoveField(model_name="comment", name="thread",),
         migrations.RemoveField(model_name="comment", name="updated_at",),
@@ -59,16 +59,16 @@ class Migration(migrations.Migration):
                 auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
             ),
         ),
-        migrations.DeleteModel(name="Forum",),
+        migrations.DeleteModel(name="history",),
         migrations.DeleteModel(name="Thread",),
         migrations.AddField(
             model_name="comment",
-            name="forum_entry",
+            name="history_entry",
             field=models.ForeignKey(
                 default=None,
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name="comments",
-                to="forum.forumentry",
+                to="history.historyentry",
             ),
         ),
     ]

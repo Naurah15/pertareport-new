@@ -1,7 +1,7 @@
 import json
 from django.shortcuts import render, redirect, get_object_or_404, reverse
-from forum.forms import ForumEntryForm, CommentForm
-from forum.models import ForumEntry, Comment
+from history.forms import ForumEntryForm, CommentForm
+from history.models import ForumEntry, Comment
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth import authenticate

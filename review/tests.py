@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from katalog.models import Product
+from report.models import Product
 from .models import ReviewEntry
 
 class ReviewEntryTests(TestCase):

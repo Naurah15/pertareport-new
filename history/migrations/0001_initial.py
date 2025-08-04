@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name="Forum",
+            name="History",
             fields=[
                 (
                     "id",
@@ -57,11 +57,11 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
-                    "forum",
+                    "history",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="threads",
-                        to="forum.forum",
+                        to="history.history",
                     ),
                 ),
             ],
@@ -94,7 +94,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="comments",
-                        to="forum.thread",
+                        to="history.thread",
                     ),
                 ),
             ],

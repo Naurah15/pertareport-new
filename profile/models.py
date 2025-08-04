@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from katalog.models import Product
+from report.models import Product
 
 class Bookmarks(models.Model):
     bookmarks = models.ManyToManyField(User, related_name='bookmark', default=None, blank=True)

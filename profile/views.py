@@ -2,7 +2,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from .models import Product
 from .models import Bookmarks
-from katalog.models import Product
+from report.models import Product
 from django.http import JsonResponse
 from django.http import HttpResponseRedirect
 from django.urls import reverse

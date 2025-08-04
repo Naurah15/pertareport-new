@@ -1,8 +1,8 @@
 from django.urls import path
-from forum.views import create_forum_entry, show_main, add_comment, delete_forum
-from forum.views import add_comment_flutter, create_forum_entry, show_main, add_comment, delete_forum, show_json_forum, delete_forum_flutter, create_forum_flutter, show_json_comment_forum
+from history.views import create_forum_entry, show_main, add_comment, delete_forum
+from history.views import add_comment_flutter, create_forum_entry, show_main, add_comment, delete_forum, show_json_forum, delete_forum_flutter, create_forum_flutter, show_json_comment_forum
 
-app_name = 'forum'
+app_name = 'history'
 
 urlpatterns = [
     path('show-main', show_main, name='show_main'),
