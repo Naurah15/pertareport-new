@@ -8,18 +8,18 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ("bookmark", "0001_initial"),
+        ("profile", "0001_initial"),
     ]
 
     operations = [
-        migrations.AlterUniqueTogether(name="bookmarks", unique_together=set(),),
+        migrations.AlterUniqueTogether(name="profile", unique_together=set(),),
         migrations.AddField(
-            model_name="bookmarks",
-            name="bookmarks",
+            model_name="profile",
+            name="profile",
             field=models.ManyToManyField(
                 blank=True,
                 default=None,
-                related_name="bookmark",
+                related_name="profile",
                 to=settings.AUTH_USER_MODEL,
             ),
         ),
