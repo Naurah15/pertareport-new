@@ -62,6 +62,7 @@ def update_profile(request):
         'error': 'Invalid request method.'
     }, status=405)
 
+@login_required
 @csrf_exempt
 def profile_flutter(request):
     """View untuk Flutter - mendapatkan data profil user"""
@@ -89,6 +90,7 @@ def profile_flutter(request):
     }, status=405)
 
 @csrf_exempt
+@login_required
 def update_profile_flutter(request):
     """View untuk Flutter - update profil user"""
     if request.method == 'POST':
@@ -114,7 +116,7 @@ def update_profile_flutter(request):
             profile.save()
             return JsonResponse({
                 'success': True,
-                'message': 'Profile updated successfully!'
+                'message': 'Profile updated successfully!' 
             }, status=200)
         except Exception as e:
             return JsonResponse({
