@@ -1,120 +1,128 @@
-from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
-from .models import Product
-from .models import Bookmarks
-from report.models import Product
-from django.http import JsonResponse
-from django.http import HttpResponseRedirect
-from django.urls import reverse
 from django.shortcuts import render
-from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
-from .models import Product, Bookmarks
-from datetime import datetime
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.models import User
 
-@csrf_exempt
 @login_required
-def remove_bookmark(request, product_id):
-    if request.method == 'POST':
-        product = get_object_or_404(Product, id=product_id)
-        user = request.user
-
-        # Mencari atau membuat bookmark baru
-        bookmark, created = Bookmarks.objects.get_or_create(user=user, product=product)
-
-        if not created:
-            # Jika bookmark sudah ada, hapus
-            bookmark.delete()
-            # is_bookmarked = False
-            return JsonResponse({'success': True})
-    else:
-        return JsonResponse({'success': False, 'error': 'Invalid request'}, status=400)
-    
-@csrf_exempt
-@login_required
-def add_bookmark(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
+def profile_view(request):
+    """View untuk menampilkan profil user"""
     user = request.user
+    profile = user.profile  # akses langsung
 
-    bookmark, created = Bookmarks.objects.get_or_create(user=user, product=product)
-
-    if not created:
-        bookmark.delete()
-    return HttpResponseRedirect(request.META['HTTP_REFERER'])
+    context = {
+        'user': user,
+        'username': user.username,
+        'email': user.email,
+        'phone_number': profile.phone_number,
+        'date_joined': user.date_joined,
+        'last_login': user.last_login,
+    }
+    return render(request, 'profile.html', context)
 
 @csrf_exempt
 @login_required
-def bookmarked_products(request):
-    bookmarks = Bookmarks.objects.filter(user=request.user)
-    bookmarked_products = [bookmark.product for bookmark in bookmarks]
-
-    return render(request, 'show_bookmarks.html', {'bookmarked_products': bookmarked_products})
-
-@csrf_exempt
-def add_bookmark_flutter(request, product_id):
+def update_profile(request):
+    """View untuk update profil user via AJAX"""
     if request.method == 'POST':
-        product = get_object_or_404(Product, id=product_id)
-        
-        # Hardcoded user for development
-        user_id = request.user.id # Default to user ID 1 if not provided
-        
-        # Menambahkan bookmark
-        bookmark, created = Bookmarks.objects.get_or_create(user_id=user_id, product=product)
+        user = request.user
+        profile = user.profile
 
-        if created:
-            return JsonResponse({'success': True, 'message': 'Bookmark added.'}, status=201)
+        # Update email
+        email = request.POST.get('email', '').strip()
+        if email:
+            if User.objects.filter(email=email).exclude(id=user.id).exists():
+                return JsonResponse({
+                    'success': False,
+                    'error': 'Email already used by another user.'
+                }, status=400)
+            user.email = email
         else:
-            return JsonResponse({'success': False, 'message': 'Bookmark already exists.'}, status=200)
+            user.email = ''
 
-    return JsonResponse({'success': False, 'error': 'Invalid request method.'}, status=405)
+        # Update phone number
+        phone_number = request.POST.get('phone_number', '').strip()
+        profile.phone_number = phone_number
+
+        try:
+            user.save()
+            profile.save()
+            return JsonResponse({
+                'success': True,
+                'message': 'Profile updated successfully!'
+            })
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'error': str(e)
+            }, status=400)
+
+    return JsonResponse({
+        'success': False,
+        'error': 'Invalid request method.'
+    }, status=405)
 
 @csrf_exempt
-def remove_bookmark_flutter(request, product_id):
-    if request.method == 'POST':
-        product = get_object_or_404(Product, id=product_id)
-        
-        # Hardcoded user for development
-        user_id = request.user.id # Default to user ID 1 if not provided
-
-        # Menghapus bookmark jika ada
-        bookmark = Bookmarks.objects.filter(user_id=user_id, product=product).first()
-        if bookmark:
-            bookmark.delete()
-            return JsonResponse({'success': True, 'message': 'Bookmark removed.'}, status=200)
-        else:
-            return JsonResponse({'success': False, 'message': 'Bookmark not found.'}, status=404)
-
-    return JsonResponse({'success': False, 'error': 'Invalid request method.'}, status=405)
-
-@csrf_exempt
-def bookmarked_products_flutter(request):
+def profile_flutter(request):
+    """View untuk Flutter - mendapatkan data profil user"""
     if request.method == 'GET':
-        # Hardcoded user for development
-        user_id = request.user.id
-        # Mendapatkan semua bookmark untuk user saat ini
-        bookmarks = Bookmarks.objects.filter(user_id=user_id)
-        
-        # Membentuk data produk yang di-bookmark
-        bookmarked_products = [
-            {
-                'id': bookmark.product.pk,
-                'nama': bookmark.product.nama,
-                'kategori': bookmark.product.kategori,
-                'harga': str(bookmark.product.harga),  # Konversi Decimal ke string untuk JSON
-                'nama_restoran': bookmark.product.nama_restoran,
-                'lokasi': bookmark.product.lokasi,
-                'url_gambar': bookmark.product.url_gambar,
-                'created_at': bookmark.created_at.strftime('%Y-%m-%d %H:%M:%S'),
-                'updated_at': bookmark.updated_at.strftime('%Y-%m-%d %H:%M:%S'),
-            }
-            for bookmark in bookmarks
-        ]
+        user = request.user
+        profile = user.profile
 
-        # Mengembalikan data dalam format JSON
-        return JsonResponse({'success': True, 'bookmarked_products': bookmarked_products}, status=200)
+        profile_data = {
+            'id': user.id,
+            'username': user.username,
+            'email': user.email,
+            'phone_number': profile.phone_number,
+            'date_joined': user.date_joined.strftime('%Y-%m-%d %H:%M:%S'),
+            'last_login': user.last_login.strftime('%Y-%m-%d %H:%M:%S') if user.last_login else None,
+        }
 
-    # Menangani jika request method tidak valid
-    return JsonResponse({'success': False, 'error': 'Invalid request method.'}, status=405)
+        return JsonResponse({
+            'success': True,
+            'profile': profile_data
+        }, status=200)
 
+    return JsonResponse({
+        'success': False,
+        'error': 'Invalid request method.'
+    }, status=405)
 
-    
+@csrf_exempt
+def update_profile_flutter(request):
+    """View untuk Flutter - update profil user"""
+    if request.method == 'POST':
+        user = request.user
+        profile = user.profile
+
+        email = request.POST.get('email', '').strip()
+        if email:
+            if User.objects.filter(email=email).exclude(id=user.id).exists():
+                return JsonResponse({
+                    'success': False,
+                    'error': 'Email already used by another user.'
+                }, status=400)
+            user.email = email
+        else:
+            user.email = ''
+
+        phone_number = request.POST.get('phone_number', '').strip()
+        profile.phone_number = phone_number
+
+        try:
+            user.save()
+            profile.save()
+            return JsonResponse({
+                'success': True,
+                'message': 'Profile updated successfully!'
+            }, status=200)
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'error': str(e)
+            }, status=400)
+
+    return JsonResponse({
+        'success': False,
+        'error': 'Invalid request method.'
+    }, status=405)

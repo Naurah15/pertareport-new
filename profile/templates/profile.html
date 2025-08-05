@@ -1,0 +1,386 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+{% include 'navbar.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <style>
+        body {
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: #3e2723;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            background-color: #F8F4F0;
+        }
+
+        .sidebar-title {
+            margin-top: 100px;
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #4e342e;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .sidebar-title::after {
+            content: '';
+            width: 80px;
+            height: 4px;
+            background-color: #AF8F6F;
+            display: block;
+            margin: 10px auto 0;
+            border-radius: 2px;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #AF8F6F;
+            margin-bottom: 40px;
+            font-style: italic;
+        }
+
+        .profile-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 50px 20px;
+            background-color: #fffdf9;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .profile-card {
+            background-color: #fdf8f4;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border: 1px solid #d7ccc8;
+            position: relative;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, #AF8F6F, #8D6E63);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: #fff;
+            color: #AF8F6F;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 0 auto 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-name {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .profile-details {
+            padding: 40px;
+            background-color: #fff8f2;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: #5d4037;
+            font-size: 1.1rem;
+            min-width: 150px;
+        }
+
+        .detail-value {
+            color: #3e2723;
+            font-size: 1rem;
+            flex: 1;
+            text-align: right;
+        }
+
+        .detail-input {
+            color: #3e2723;
+            font-size: 1rem;
+            flex: 1;
+            text-align: right;
+            border: 1px solid #d7ccc8;
+            padding: 8px 12px;
+            border-radius: 6px;
+            background-color: #fff;
+            display: none;
+        }
+
+        .edit-btn {
+            background-color: #AF8F6F;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.3s ease;
+            margin-left: 10px;
+        }
+
+        .edit-btn:hover {
+            background-color: #8D6E63;
+        }
+
+        .save-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.3s ease;
+            margin-left: 10px;
+            display: none;
+        }
+
+        .save-btn:hover {
+            background-color: #45a049;
+        }
+
+        .cancel-btn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.3s ease;
+            margin-left: 10px;
+            display: none;
+        }
+
+        .cancel-btn:hover {
+            background-color: #d32f2f;
+        }
+
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .readonly-field {
+            opacity: 0.7;
+        }
+
+        @media (max-width: 768px) {
+            .detail-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .detail-label {
+                margin-bottom: 5px;
+                min-width: auto;
+            }
+
+            .detail-value, .detail-input {
+                text-align: left;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h2 class="sidebar-title">My Profile</h2>
+    <p class="subtitle">Kelola informasi profil Anda di sini!</p>
+
+    <div class="profile-container">
+        <div class="success-message" id="successMessage"></div>
+        <div class="error-message" id="errorMessage"></div>
+        
+        <div class="profile-card">
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    {{ user.username|first|upper }}{{ user.username|slice:"1:2"|upper }}
+                </div>
+                <div class="profile-name">{{ user.username }}</div>
+            </div>
+
+            <div class="profile-details">
+                <div class="detail-row readonly-field">
+                    <span class="detail-label">Username:</span>
+                    <span class="detail-value">{{ user.username }}</span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">Email:</span>
+                    <span class="detail-value" id="display-email">{{ user.email|default:"Not provided" }}</span>
+                    <input type="email" class="detail-input" id="input-email" value="{{ user.email }}">
+                    <button class="edit-btn" onclick="editField('email')">Edit</button>
+                    <button class="save-btn" onclick="saveField('email')">Save</button>
+                    <button class="cancel-btn" onclick="cancelEdit('email')">Cancel</button>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">Phone Number:</span>
+                    <span class="detail-value" id="display-phone_number">{{ user.profile.phone_number|default:"Not provided" }}</span>
+                    <input type="tel" class="detail-input" id="input-phone_number" value="{{ user.profile.phone_number }}">
+                    <button class="edit-btn" onclick="editField('phone_number')">Edit</button>
+                    <button class="save-btn" onclick="saveField('phone_number')">Save</button>
+                    <button class="cancel-btn" onclick="cancelEdit('phone_number')">Cancel</button>
+                </div>
+
+                <div class="detail-row readonly-field">
+                    <span class="detail-label">Member Since:</span>
+                    <span class="detail-value">{{ user.date_joined|date:"F d, Y" }}</span>
+                </div>
+
+                <div class="detail-row readonly-field">
+                    <span class="detail-label">Last Login:</span>
+                    <span class="detail-value">
+                        {% if user.last_login %}
+                            {{ user.last_login|date:"F d, Y H:i" }}
+                        {% else %}
+                            Never
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function editField(fieldName) {
+            const displayElement = document.getElementById(`display-${fieldName}`);
+            const inputElement = document.getElementById(`input-${fieldName}`);
+            const editBtn = displayElement.parentNode.querySelector('.edit-btn');
+            const saveBtn = displayElement.parentNode.querySelector('.save-btn');
+            const cancelBtn = displayElement.parentNode.querySelector('.cancel-btn');
+
+            displayElement.style.display = 'none';
+            inputElement.style.display = 'block';
+            editBtn.style.display = 'none';
+            saveBtn.style.display = 'inline-block';
+            cancelBtn.style.display = 'inline-block';
+
+            inputElement.focus();
+        }
+
+        function cancelEdit(fieldName) {
+            const displayElement = document.getElementById(`display-${fieldName}`);
+            const inputElement = document.getElementById(`input-${fieldName}`);
+            const editBtn = displayElement.parentNode.querySelector('.edit-btn');
+            const saveBtn = displayElement.parentNode.querySelector('.save-btn');
+            const cancelBtn = displayElement.parentNode.querySelector('.cancel-btn');
+
+            displayElement.style.display = 'block';
+            inputElement.style.display = 'none';
+            editBtn.style.display = 'inline-block';
+            saveBtn.style.display = 'none';
+            cancelBtn.style.display = 'none';
+
+            // Reset input value
+            if (fieldName === 'email') {
+                inputElement.value = '{{ user.email }}';
+            } else if (fieldName === 'phone_number') {
+                inputElement.value = '{{ user.profile.phone_number }}';
+            }
+        }
+
+        function saveField(fieldName) {
+            const inputElement = document.getElementById(`input-${fieldName}`);
+            const newValue = inputElement.value;
+
+            const formData = new FormData();
+            formData.append(fieldName, newValue);
+
+            fetch('{% url "profile:update_profile" %}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update display value
+                    const displayElement = document.getElementById(`display-${fieldName}`);
+                    displayElement.textContent = newValue || 'Not provided';
+                    
+                    cancelEdit(fieldName);
+                    showMessage(data.message, 'success');
+                } else {
+                    showMessage(data.error, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showMessage('An error occurred while updating profile.', 'error');
+            });
+        }
+
+        function showMessage(message, type) {
+            const successMsg = document.getElementById('successMessage');
+            const errorMsg = document.getElementById('errorMessage');
+            
+            if (type === 'success') {
+                successMsg.textContent = message;
+                successMsg.style.display = 'block';
+                errorMsg.style.display = 'none';
+                setTimeout(() => {
+                    successMsg.style.display = 'none';
+                }, 5000);
+            } else {
+                errorMsg.textContent = message;
+                errorMsg.style.display = 'block';
+                successMsg.style.display = 'none';
+                setTimeout(() => {
+                    errorMsg.style.display = 'none';
+                }, 5000);
+            }
+        }
+    </script>
+</body>
+</html>
+{% include 'footer.html' %}
+{% endblock content %}

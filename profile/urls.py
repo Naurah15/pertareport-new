@@ -1,13 +1,16 @@
+# Update urls.py Anda dengan menambahkan import dan path baru
+
 from django.urls import path
-from profile.views import remove_bookmark, bookmarked_products, add_bookmark, add_bookmark_flutter, remove_bookmark_flutter, bookmarked_products_flutter
+from profile.views import (profile_view, update_profile, profile_flutter, update_profile_flutter  # Import baru
+)
 
 app_name = 'profile'
 
 urlpatterns = [
-    path('profile/remove/<int:product_id>/', remove_bookmark, name='remove_bookmark'),
-    path('profile/add/<int:product_id>/', add_bookmark, name='add_bookmark'),
-    path('-products/', bookmarked_products, name='bookmarked_products'),
-    path('add_flutter/<int:product_id>/', add_bookmark_flutter, name='add_bookmark_flutter'),
-    path('remove_flutter/<int:product_id>/', remove_bookmark_flutter, name='remove_bookmark_flutter'),
-    path('profile-products_flutter/', bookmarked_products_flutter, name='bookmarked_products_flutter'),
+    
+    # Profile URLs (baru)
+    path('', profile_view, name='profile_view'),
+    path('update/', update_profile, name='update_profile'),
+    path('flutter/', profile_flutter, name='profile_flutter'),
+    path('update_flutter/', update_profile_flutter, name='update_profile_flutter'),
 ]

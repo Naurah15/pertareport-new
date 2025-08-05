@@ -1,53 +1,57 @@
-# from django.shortcuts import render
-# from .models import Product
+from django.shortcuts import render, redirect
+from django.utils import timezone
+from django.contrib import messages
+from .forms import LaporanForm, KegiatanFormSet
+from .models import Laporan
 
-# def main_view(request):
-#     products = Product.objects.all()
-#     return render(request, 'main.html', {'products': products})
+def laporan_form_view(request):
+    if request.method == 'POST':
+        form = LaporanForm(request.POST)
+        lokasi = request.POST.get('lokasi')  # dari input hidden (geo)
+        
+        if form.is_valid():
+            laporan = form.save(commit=False)
+            laporan.lokasi = lokasi
+            laporan.tanggal_proses = timezone.now()
+            laporan.save()
+            
+            # Process kegiatan formset
+            kegiatan_formset = KegiatanFormSet(request.POST, request.FILES, instance=laporan)
+            
+            if kegiatan_formset.is_valid():
+                kegiatan_formset.save()
+                messages.success(request, f'Laporan berhasil disimpan dengan nomor dokumen: {laporan.no_document}')
+                return redirect('report:laporan_success')
+            else:
+                # Jika formset tidak valid, hapus laporan yang sudah dibuat
+                laporan.delete()
+                messages.error(request, 'Terjadi kesalahan dalam menyimpan kegiatan.')
+        else:
+            kegiatan_formset = KegiatanFormSet(request.POST, request.FILES)
+    else:
+        form = LaporanForm()
+        kegiatan_formset = KegiatanFormSet()
+    
+    # Generate preview nomor dokumen untuk ditampilkan
+    now = timezone.now()
+    prefix = f"PTPR{now.strftime('%y%m')}"
+    last_laporan = Laporan.objects.filter(
+        no_document__startswith=prefix
+    ).order_by('-no_document').first()
+    
+    if last_laporan:
+        last_number = int(last_laporan.no_document.split('-')[1])
+        preview_number = f"{last_number + 1:04d}"
+    else:
+        preview_number = "0001"
+    
+    preview_no_document = f"{prefix}-{preview_number}"
+    
+    return render(request, 'laporan_form.html', {
+        'form': form,
+        'kegiatan_formset': kegiatan_formset,
+        'preview_no_document': preview_no_document
+    })
 
-import json
-from django.shortcuts import render
-from django.conf import settings
-import os
-from django.http import JsonResponse
-
-from report.models import Product
-
-def main_view(request):
-    # Path ke file JSON
-    file_path = os.path.join(settings.BASE_DIR, 'report', 'fixtures', 'products.json')
-    
-    # Memastikan file JSON ada
-    if not os.path.exists(file_path):
-        return render(request, 'product_list.html', {'products': [], 'error': 'File JSON tidak ditemukan.'})
-    
-    # Membaca data dari file JSON
-    try:
-        with open(file_path, 'r') as file:
-            products = json.load(file)
-    except json.JSONDecodeError:
-        # Menangani kesalahan jika format JSON tidak valid
-        return render(request, 'product_list.html', {'products': [], 'error': 'File JSON tidak valid.'})
-    
-    # Render ke template 'product_list.html' di dalam folder main/templates
-    return render(request, 'product_list.html', {'products': products})
-
-def get_products_json(request):
-    # Path ke file JSON
-    file_path = os.path.join(settings.BASE_DIR, 'report', 'fixtures', 'products.json')
-    
-    # Memastikan file JSON ada
-    if not os.path.exists(file_path):
-        return JsonResponse({'error': 'File JSON tidak ditemukan.'}, status=404)
-    
-    # Membaca data dari file JSON
-    try:
-        with open(file_path, 'r') as file:
-            products = json.load(file)
-    except json.JSONDecodeError:
-        # Menangani kesalahan jika format JSON tidak valid
-        return JsonResponse({'error': 'File JSON tidak valid.'}, status=400)
-    
-    # Mengembalikan data dalam format JSON
-    print(Product.objects.all())
-    return JsonResponse({'products': products})
+def laporan_success_view(request):
+    return render(request, 'laporan_success.html')

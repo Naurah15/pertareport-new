@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Berhasil Disimpan - Pertamina Retail</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --pertamina-red: #E31E24;
+            --pertamina-blue: #003876;
+            --pertamina-light-gray: #F8FAFC;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--pertamina-light-gray) 0%, #E5E7EB 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .success-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            padding: 3rem;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .success-icon {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: white;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            font-size: 2rem;
+        }
+
+        .success-title {
+            color: var(--pertamina-blue);
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .success-message {
+            color: #6B7280;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--pertamina-red) 0%, #B91C1C 100%);
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(227, 30, 36, 0.3);
+        }
+
+        .btn-outline-secondary {
+            border: 2px solid var(--pertamina-blue);
+            color: var(--pertamina-blue);
+            padding: 0.75rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-secondary:hover {
+            background: var(--pertamina-blue);
+            border-color: var(--pertamina-blue);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="success-card">
+        <div class="success-icon">
+            <i class="fas fa-check"></i>
+        </div>
+        
+        <h1 class="success-title">Laporan Berhasil Disimpan!</h1>
+        
+        <p class="success-message">
+            Terima kasih! Laporan kegiatan SPBU Anda telah berhasil disimpan dalam sistem. 
+            Data akan diproses dan dapat diakses melalui dashboard monitoring.
+        </p>
+        
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <a href="{% url 'report:laporan_form' %}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Buat Laporan Baru
+            </a>
+            <a href="/" class="btn btn-outline-secondary">
+                <i class="fas fa-home me-2"></i>Kembali ke Dashboard
+            </a>
+        </div>
+    </div>
+</body>
+</html>

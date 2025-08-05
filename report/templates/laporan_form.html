@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Laporan Kegiatan SPBU - Pertamina Retail</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --pertamina-red: #E31E24;
+            --pertamina-dark-red: #B91C1C;
+            --pertamina-blue: #003876;
+            --pertamina-dark-blue: #002855;
+            --pertamina-gray: #6B7280;
+            --pertamina-light-gray: #F8FAFC;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--pertamina-light-gray) 0%, #E5E7EB 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+
+        .header-section {
+            background: linear-gradient(135deg, var(--pertamina-blue) 0%, var(--pertamina-dark-blue) 100%);
+            color: white;
+            padding: 2rem 0;
+            box-shadow: 0 4px 20px rgba(0, 56, 118, 0.3);
+        }
+
+        .header-content {
+            text-align: center;
+        }
+
+        .header-content h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-content p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 0;
+        }
+
+        .main-container {
+            max-width: 1000px;
+            margin: -2rem auto 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border: 1px solid #E5E7EB;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--pertamina-red) 0%, var(--pertamina-dark-red) 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            border: none;
+        }
+
+        .card-header h3 {
+            margin: 0;
+            font-weight: 600;
+            font-size: 1.3rem;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        .info-section {
+            background: var(--pertamina-light-gray);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--pertamina-red);
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .info-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: var(--pertamina-blue);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-value {
+            color: var(--pertamina-gray);
+            font-weight: 500;
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border: 1px solid #E5E7EB;
+            border-radius: 12px;
+            background: #FEFEFE;
+        }
+
+        .form-section h4 {
+            color: var(--pertamina-blue);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-control, .form-select {
+            border: 2px solid #E5E7EB;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--pertamina-red);
+            box-shadow: 0 0 0 0.25rem rgba(227, 30, 36, 0.1);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--pertamina-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .kegiatan-item {
+            border: 2px solid #E5E7EB;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            background: white;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .kegiatan-item:hover {
+            border-color: var(--pertamina-red);
+            box-shadow: 0 4px 20px rgba(227, 30, 36, 0.1);
+        }
+
+        .kegiatan-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .kegiatan-number {
+            background: var(--pertamina-red);
+            color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #DC2626;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background: #FEF2F2;
+            color: #B91C1C;
+        }
+
+        .add-kegiatan-btn {
+            background: linear-gradient(135deg, var(--pertamina-blue) 0%, var(--pertamina-dark-blue) 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+        }
+
+        .add-kegiatan-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 56, 118, 0.3);
+            color: white;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, var(--pertamina-red) 0%, var(--pertamina-dark-red) 100%);
+            color: white;
+            border: none;
+            padding: 1rem 3rem;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 20px rgba(227, 30, 36, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(227, 30, 36, 0.4);
+            color: white;
+        }
+
+        .other-input {
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .location-detecting {
+            color: var(--pertamina-gray);
+            font-style: italic;
+        }
+
+        .location-success {
+            color: #059669;
+        }
+
+        .alert {
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-text {
+            color: var(--pertamina-gray);
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                margin-left: 1rem;
+                margin-right: 1rem;
+            }
+            
+            .card-body {
+                padding: 1.5rem;
+            }
+            
+            .header-content h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header-section">
+        <div class="container">
+            <div class="header-content">
+                <h1><i class="fas fa-clipboard-list me-2"></i>Form Laporan Kegiatan SPBU</h1>
+                <p>Pertamina Retail - Sistem Pelaporan Kegiatan</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container main-container">
+        <div class="form-card">
+            <div class="card-header">
+                <h3><i class="fas fa-file-alt me-2"></i>Data Laporan</h3>
+            </div>
+            <div class="card-body">
+                <!-- Info Section -->
+                <div class="info-section">
+                    <div class="info-row">
+                        <div class="info-label">
+                            <i class="fas fa-file-code"></i>
+                            Nomor Dokumen
+                        </div>
+                        <div class="info-value">{{ preview_no_document }}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">
+                            <i class="fas fa-calendar"></i>
+                            Tanggal Proses
+                        </div>
+                        <div class="info-value" id="current_date"></div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Lokasi
+                        </div>
+                        <div class="info-value location-detecting" id="lokasi_text">
+                            <i class="fas fa-spinner fa-spin me-1"></i>Mendeteksi lokasi...
+                        </div>
+                    </div>
+                </div>
+
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            <i class="fas fa-info-circle me-2"></i>{{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="post" enctype="multipart/form-data" id="laporanForm">
+                    {% csrf_token %}
+                    
+                    <!-- Hidden inputs -->
+                    <input type="hidden" name="lokasi" id="lokasi">
+                    {{ kegiatan_formset.management_form }}
+
+                    <!-- Basic Info Section -->
+                    <div class="form-section">
+                        <h4><i class="fas fa-user"></i>Informasi Team</h4>
+                        <div class="mb-3">
+                            <label class="form-label">Nama Team Support</label>
+                            {{ form.nama_team_support }}
+                            <div class="form-text">Masukkan nama lengkap team support yang bertugas</div>
+                        </div>
+                    </div>
+
+                    <!-- Kegiatan Section -->
+                    <div class="form-section">
+                        <h4><i class="fas fa-tasks"></i>Daftar Kegiatan</h4>
+                        
+                        <div id="kegiatan-container">
+                            {% for form in kegiatan_formset %}
+                                <div class="kegiatan-item" data-form-index="{{ forloop.counter0 }}">
+                                    <div class="kegiatan-header">
+                                        <div class="kegiatan-number">{{ forloop.counter }}</div>
+                                        {% if not forloop.first %}
+                                            <button type="button" class="delete-btn" onclick="removeKegiatan(this)">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        {% endif %}
+                                    </div>
+
+                                    <!-- Hidden fields for formset -->
+                                    {% for hidden in form.hidden_fields %}
+                                        {{ hidden }}
+                                    {% endfor %}
+
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Jenis Kegiatan</label>
+                                            {{ form.kegiatan }}
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <div class="other-input-container">
+                                                {{ form.kegiatan_other }}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Detail</label>
+                                        {{ form.remark }}
+                                        <div class="form-text">Jelaskan detail kegiatan yang dilakukan</div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Foto Kegiatan</label>
+                                        {{ form.foto }}
+                                        <div class="form-text">Upload foto dokumentasi kegiatan (opsional)</div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <button type="button" class="btn add-kegiatan-btn" onclick="addKegiatan()">
+                            <i class="fas fa-plus"></i>
+                            Tambah Kegiatan
+                        </button>
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn submit-btn">
+                            <i class="fas fa-paper-plane me-2"></i>
+                            Submit Laporan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let formIndex = "{{ kegiatan_formset.total_form_count|default:0 }}";
+        formIndex = parseInt(formIndex);
+
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set current date
+            const now = new Date();
+            document.getElementById('current_date').textContent = now.toLocaleDateString('id-ID', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            // Initialize existing forms
+            document.querySelectorAll('.kegiatan-select').forEach(function(select) {
+                toggleOtherInput(select);
+            });
+
+            // Get location
+            getLocation();
+        });
+
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    let lat = position.coords.latitude.toFixed(6);
+                    let lon = position.coords.longitude.toFixed(6);
+                    document.getElementById('lokasi').value = `${lat}, ${lon}`;
+                    document.getElementById('lokasi_text').innerHTML = `<i class="fas fa-map-marker-alt me-1"></i>${lat}, ${lon}`;
+                    document.getElementById('lokasi_text').className = 'info-value location-success';
+                }, function(error) {
+                    document.getElementById('lokasi_text').innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i>Lokasi tidak tersedia';
+                    document.getElementById('lokasi_text').className = 'info-value text-warning';
+                });
+            } else {
+                document.getElementById('lokasi_text').innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i>Geolocation tidak didukung';
+                document.getElementById('lokasi_text').className = 'info-value text-warning';
+            }
+        }
+
+        function toggleOtherInput(selectElement) {
+            const container = selectElement.closest('.kegiatan-item');
+            const otherInput = container.querySelector('.other-input-container input');
+            
+            if (selectElement.value === 'other') {
+                otherInput.style.display = 'block';
+                otherInput.required = true;
+            } else {
+                otherInput.style.display = 'none';
+                otherInput.required = false;
+                otherInput.value = '';
+            }
+        }
+
+        function addKegiatan() {
+            const container = document.getElementById('kegiatan-container');
+            const newForm = document.createElement('div');
+            newForm.className = 'kegiatan-item';
+            newForm.setAttribute('data-form-index', formIndex);
+            
+            const kegiatanCount = container.children.length + 1;
+            
+            newForm.innerHTML = `
+                <div class="kegiatan-header">
+                    <div class="kegiatan-number">${kegiatanCount}</div>
+                    <button type="button" class="delete-btn" onclick="removeKegiatan(this)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <input type="hidden" name="kegiatan_list-${formIndex}-id" id="id_kegiatan_list-${formIndex}-id">
+                <input type="hidden" name="kegiatan_list-${formIndex}-laporan" id="id_kegiatan_list-${formIndex}-laporan">
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Jenis Kegiatan</label>
+                        <select name="kegiatan_list-${formIndex}-kegiatan" class="form-control kegiatan-select" id="id_kegiatan_list-${formIndex}-kegiatan" onchange="toggleOtherInput(this)">
+                            <option value="">---------</option>
+                            <option value="melayani_pengisian_bbm">Melayani pengisian BBM</option>
+                            <option value="mengelola_transaksi">Mengelola transaksi</option>
+                            <option value="menjaga_kebersihan_area_spbu">Menjaga kebersihan area SPBU</option>
+                            <option value="memantau_stok">Memantau stok</option>
+                            <option value="memperbaiki_kerusakan">Memperbaiki kerusakan</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="other-input-container">
+                            <input type="text" name="kegiatan_list-${formIndex}-kegiatan_other" class="form-control other-input" id="id_kegiatan_list-${formIndex}-kegiatan_other" placeholder="Masukkan kegiatan lainnya" style="display: none;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Detail</label>
+                    <textarea name="kegiatan_list-${formIndex}-remark" cols="40" rows="3" class="form-control" placeholder="Masukkan detail kegiatan" id="id_kegiatan_list-${formIndex}-remark"></textarea>
+                    <div class="form-text">Jelaskan detail kegiatan yang dilakukan</div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Foto Kegiatan</label>
+                    <input type="file" name="kegiatan_list-${formIndex}-foto" accept="image/*" class="form-control" id="id_kegiatan_list-${formIndex}-foto">
+                    <div class="form-text">Upload foto dokumentasi kegiatan (opsional)</div>
+                </div>
+            `;
+            
+            container.appendChild(newForm);
+            
+            // Update form count
+            formIndex++;
+            document.getElementById('id_kegiatan_list-TOTAL_FORMS').value = formIndex;
+            
+            // Update numbering
+            updateKegiatanNumbers();
+        }
+
+        function removeKegiatan(button) {
+            const kegiatanItem = button.closest('.kegiatan-item');
+            kegiatanItem.remove();
+            
+            // Update form count
+            const totalForms = document.getElementById('id_kegiatan_list-TOTAL_FORMS');
+            totalForms.value = parseInt(totalForms.value) - 1;
+            
+            // Update numbering
+            updateKegiatanNumbers();
+        }
+
+        function updateKegiatanNumbers() {
+            const kegiatanItems = document.querySelectorAll('.kegiatan-item');
+            kegiatanItems.forEach((item, index) => {
+                const numberElement = item.querySelector('.kegiatan-number');
+                numberElement.textContent = index + 1;
+            });
+        }
+
+        // Form validation
+        document.getElementById('laporanForm').addEventListener('submit', function(e) {
+            const kegiatanItems = document.querySelectorAll('.kegiatan-item');
+            let hasError = false;
+            
+            kegiatanItems.forEach(function(item) {
+                const kegiatanSelect = item.querySelector('.kegiatan-select');
+                const otherInput = item.querySelector('.other-input-container input');
+                const remarkTextarea = item.querySelector('textarea');
+                
+                // Validate kegiatan selection
+                if (!kegiatanSelect.value) {
+                    kegiatanSelect.style.borderColor = '#DC2626';
+                    hasError = true;
+                } else {
+                    kegiatanSelect.style.borderColor = '#E5E7EB';
+                }
+                
+                // Validate other input if selected
+                if (kegiatanSelect.value === 'other' && !otherInput.value.trim()) {
+                    otherInput.style.borderColor = '#DC2626';
+                    hasError = true;
+                } else {
+                    otherInput.style.borderColor = '#E5E7EB';
+                }
+                
+                // Validate remark
+                if (!remarkTextarea.value.trim()) {
+                    remarkTextarea.style.borderColor = '#DC2626';
+                    hasError = true;
+                } else {
+                    remarkTextarea.style.borderColor = '#E5E7EB';
+                }
+            });
+            
+            // Validate nama team support
+            const namaTeam = document.querySelector('input[name="nama_team_support"]');
+            if (!namaTeam.value.trim()) {
+                namaTeam.style.borderColor = '#DC2626';
+                hasError = true;
+            } else {
+                namaTeam.style.borderColor = '#E5E7EB';
+            }
+            
+            if (hasError) {
+                e.preventDefault();
+                alert('Mohon lengkapi semua field yang wajib diisi');
+                return false;
+            }
+            
+            // Show loading state
+            const submitBtn = document.querySelector('.submit-btn');
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Menyimpan...';
+            submitBtn.disabled = true;
+        });
+    </script>
+</body>
+</html>

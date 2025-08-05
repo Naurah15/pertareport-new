@@ -2,16 +2,433 @@
 {% load static %}
 
 {% block meta %}
-<title>Rasa Jogja</title>
+<title>PertaReport</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <style>
-  .dot.active {
-    background-color: #ffa452; /* Active dot color */
-    width: 12px;
-    height: 12px;
-  }
-  body {
-    background-color: #F8F4F0;
-  }
+    :root {
+        --pertamina-red: #E31E24;
+        --pertamina-dark-red: #B91C1C;
+        --pertamina-blue: #003876;
+        --pertamina-dark-blue: #002855;
+        --pertamina-gray: #6B7280;
+        --pertamina-light-gray: #F8FAFC;
+        --pertamina-dark-gray: #374151;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, var(--pertamina-light-gray) 0%, #E5E7EB 100%);
+        min-height: 100vh;
+    }
+
+    .dot.active {
+        background-color: var(--pertamina-red) !important;
+        width: 12px;
+        height: 12px;
+        transform: scale(1.2);
+    }
+
+    .hero-section {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(circle at 20% 20%, rgba(227, 30, 36, 0.08) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(0, 56, 118, 0.08) 0%, transparent 50%);
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    .slider-container {
+        background: white;
+        border-radius: 24px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+        border: 1px solid #E5E7EB;
+        position: relative;
+        z-index: 2;
+    }
+
+    .slider-header {
+        background: linear-gradient(135deg, var(--pertamina-blue) 0%, var(--pertamina-dark-blue) 100%);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .slider-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 70% 70%, rgba(227, 30, 36, 0.1) 0%, transparent 50%);
+    }
+
+    .slider-logo {
+        width: 60px;
+        height: 60px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        position: relative;
+        z-index: 1;
+    }
+
+    .slider-logo i {
+        font-size: 1.5rem;
+        color: var(--pertamina-red);
+    }
+
+    .slider-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        position: relative;
+        z-index: 1;
+    }
+
+    .slider-wrapper img {
+        transition: transform 0.3s ease;
+    }
+
+    .slider-wrapper img:hover {
+        transform: scale(1.02);
+    }
+
+    .dots-container .dot {
+        transition: all 0.3s ease;
+        border: 2px solid white;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-section {
+        margin-top: 3rem;
+    }
+
+    .feature-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 15px 45px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        border: 1px solid #E5E7EB;
+        position: relative;
+    }
+
+    .feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--pertamina-red) 0%, var(--pertamina-blue) 100%);
+    }
+
+    .feature-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+    }
+
+    .feature-card img {
+        transition: transform 0.3s ease;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .feature-card:hover img {
+        transform: scale(1.05);
+    }
+
+    .card-title {
+        color: var(--pertamina-blue);
+        font-weight: 700;
+        font-size: 1.25rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .card-description {
+        color: var(--pertamina-gray);
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+    }
+
+    .card-button {
+        background: linear-gradient(135deg, var(--pertamina-red) 0%, var(--pertamina-dark-red) 100%);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 20px rgba(227, 30, 36, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card-button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+    }
+
+    .card-button:hover::before {
+        left: 100%;
+    }
+
+    .card-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(227, 30, 36, 0.4);
+        text-decoration: none;
+        color: white;
+    }
+
+    .info-section {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 15px 45px rgba(0, 0, 0, 0.1);
+        border: 1px solid #E5E7EB;
+        overflow: hidden;
+        margin-top: 3rem;
+    }
+
+    .tab-navigation {
+        background: linear-gradient(135deg, #F8FAFC 0%, #E5E7EB 100%);
+        border-bottom: 1px solid #E5E7EB;
+        display: flex;
+    }
+
+    .tab-button {
+        padding: 1rem 1.5rem;
+        background: transparent;
+        border: none;
+        color: var(--pertamina-gray);
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border-bottom: 3px solid transparent;
+        position: relative;
+    }
+
+    .tab-button.active {
+        color: var(--pertamina-red);
+        border-bottom-color: var(--pertamina-red);
+        background: rgba(227, 30, 36, 0.05);
+    }
+
+    .tab-button:hover:not(.active) {
+        color: var(--pertamina-blue);
+        background: rgba(0, 56, 118, 0.05);
+    }
+
+    .tab-content {
+        padding: 2rem;
+    }
+
+    .tab-title {
+        color: var(--pertamina-blue);
+        font-size: 2rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+    }
+
+    .tab-description {
+        color: var(--pertamina-gray);
+        line-height: 1.7;
+        margin-bottom: 1.5rem;
+    }
+
+    .tab-link {
+        color: var(--pertamina-red);
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .tab-link:hover {
+        color: var(--pertamina-blue);
+        text-decoration: none;
+    }
+
+    .service-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .service-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+        padding: 0.75rem;
+        background: rgba(227, 30, 36, 0.02);
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+
+    .service-item:hover {
+        background: rgba(227, 30, 36, 0.05);
+        transform: translateX(8px);
+    }
+
+    .service-icon {
+        width: 24px;
+        height: 24px;
+        color: var(--pertamina-red);
+        flex-shrink: 0;
+    }
+
+    .service-text {
+        color: var(--pertamina-dark-gray);
+        font-weight: 500;
+    }
+
+    .developers-section {
+        text-align: center;
+    }
+
+    .developers-title {
+        color: var(--pertamina-blue);
+        font-size: 2rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+    }
+
+    .developers-names {
+        color: var(--pertamina-gray);
+        font-size: 1.1rem;
+        font-weight: 600;
+        background: linear-gradient(90deg, var(--pertamina-red), var(--pertamina-blue));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .floating-elements {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .floating-circle {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(227, 30, 36, 0.05);
+        animation: float 8s ease-in-out infinite;
+    }
+
+    .floating-circle:nth-child(1) {
+        width: 60px;
+        height: 60px;
+        top: 15%;
+        left: 10%;
+        animation-delay: 0s;
+    }
+
+    .floating-circle:nth-child(2) {
+        width: 80px;
+        height: 80px;
+        top: 70%;
+        right: 15%;
+        animation-delay: 3s;
+        background: rgba(0, 56, 118, 0.05);
+    }
+
+    .floating-circle:nth-child(3) {
+        width: 40px;
+        height: 40px;
+        top: 50%;
+        left: 5%;
+        animation-delay: 6s;
+    }
+
+    @keyframes float {
+        0%, 100% { 
+            transform: translateY(0px) translateX(0px); 
+            opacity: 0.7;
+        }
+        33% { 
+            transform: translateY(-15px) translateX(10px); 
+            opacity: 1;
+        }
+        66% { 
+            transform: translateY(10px) translateX(-5px); 
+            opacity: 0.8;
+        }
+    }
+
+    .hero-section {
+        animation: slideInUp 0.8s ease-out;
+    }
+
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .feature-cards {
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .slider-header {
+            padding: 1.5rem 1rem;
+        }
+        
+        .tab-content {
+            padding: 1.5rem;
+        }
+        
+        .tab-title {
+            font-size: 1.5rem;
+        }
+    }
 </style>
 {% endblock meta %}
 
@@ -19,223 +436,195 @@
 {% include 'navbar.html' %}
 
 <!-- Spacer Div -->
-<div class="h-16"></div> <!-- Adjust height as needed -->
+<div class="h-16"></div>
 
-<div class="w-full max-w-screen-lg mx-auto p-4 md:py-6">
-    <div class="overflow-x-hidden rounded-[15px] px-4 md:px-6 pb-6 pt-12 min-h-[60vh] bg-[#fffaf5] flex flex-col">
+<div class="floating-elements">
+    <div class="floating-circle"></div>
+    <div class="floating-circle"></div>
+    <div class="floating-circle"></div>
+</div>
+
+<div class="w-full max-w-screen-lg mx-auto p-4 md:py-6 hero-section">
+    <div class="slider-container">
+        <div class="slider-header">
+            <div class="slider-logo">
+                <i class="fas fa-clipboard-list"></i>
+            </div>
+            <h1 class="slider-title">PertaReport System</h1>
+        </div>
+        
         <!-- Image Slider -->
-        <div class="relative w-full h-[300px] overflow-hidden rounded-[15px] mb-6">
+        <div class="relative w-full h-[300px] overflow-hidden">
             <div class="slider-wrapper flex transition-transform duration-500 ease-in-out" id="slider">
                 <!-- Slide 1 -->
                 <div class="min-w-full h-full">
-                    <img src="{% static 'images/rasajogja.PNG' %}" alt="Slide 1" class="object-cover w-full h-full">
+                    <img src="{% static 'images/home_1.PNG' %}" alt="Slide 1" class="object-cover w-full h-full">
                 </div>
                 <!-- Slide 2 -->
                 <div class="min-w-full h-full">
-                    <img src="{% static 'images/jogja_1.jpeg' %}" alt="Slide 2" class="object-cover w-full h-full">
+                    <img src="{% static 'images/home_2.PNG' %}" alt="Slide 2" class="object-cover w-full h-full">
                 </div>
                 <!-- Slide 3 -->
                 <div class="min-w-full h-full">
-                    <img src="{% static 'images/jogja_3.jpeg' %}" alt="Slide 3" class="object-cover w-full h-full">
+                    <img src="{% static 'images/home_3.PNG' %}" alt="Slide 3" class="object-cover w-full h-full">
                 </div>
             </div>
 
             <!-- Slider Dots -->
-            <div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-2" id="dots-container">
-                <div class="dot w-2 h-2 rounded-full bg-gray-300 cursor-pointer" data-index="0"></div>
-                <div class="dot w-2 h-2 rounded-full bg-gray-300 cursor-pointer" data-index="1"></div>
-                <div class="dot w-2 h-2 rounded-full bg-gray-300 cursor-pointer" data-index="2"></div>
+            <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-3 dots-container" id="dots-container">
+                <div class="dot w-3 h-3 rounded-full bg-gray-300 cursor-pointer" data-index="0"></div>
+                <div class="dot w-3 h-3 rounded-full bg-gray-300 cursor-pointer" data-index="1"></div>
+                <div class="dot w-3 h-3 rounded-full bg-gray-300 cursor-pointer" data-index="2"></div>
             </div>
         </div>
     </div>
 </div>
 
-
-
-
-<div class="w-full max-w-screen-xl mx-auto p-4 md:py-8 flex justify-center gap-x-4">
-    <div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow :bg-gray-800 :border-gray-700">
-        <a href="#">
-            <img class="rounded-t-lg" src="{% static 'images/slider4.jpg' %}" alt="" />
-        </a>
-        <div class="p-5">
-            <a href="{% url 'katalog:main_view' %}">
-                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 :text-white">Temukan Makanan dan Minuman Khas Jogja</h5>
-            </a>
-            <p class="mb-3 font-normal text-gray-700 :text-gray-400">Tidak hanya menjadi panduan kuliner, RasaJogja juga menjadi jembatan yang menghubungkan pengguna dengan kekayaan budaya kuliner Jogjakarta.</p>
-            <a href="{% url 'katalog:main_view' %}" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-[#493628] rounded-lg hover:bg-[#D4BDAC] focus:ring-4 focus:outline-none focus:ring-[#D4BDAC] :bg-[#D4BDAC] :hover:bg-[#D4BDAC] :focus:ring-[#D4BDAC]">
-                Read more
-                <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
-                </svg>
-            </a>
-        </div>
-    </div>
-    
-    <div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow :bg-gray-800 :border-gray-700">
-        <a href="#">
-            <img class="rounded-t-lg" src="{% static 'images/slider5.jpg' %}" alt="" />
-        </a>
-        <div class="p-5">
-            <a href="{% url 'forum:show_main' %}">
-                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 :text-white">Nikmati yang Terbaik: Rekomendasi Favorit Pilihan Pengguna!</h5>
-            </a>
-            <p class="mb-3 font-normal text-gray-700 :text-gray-400">Nikmati hidangan yang paling diminati dan mendapatkan pengalaman kuliner yang tak terlupakan.</p>
-            <a href="{% url 'forum:show_main' %}" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-[#493628] rounded-lg hover:bg-[#D4BDAC] focus:ring-4 focus:outline-none focus:ring-[#D4BDAC] :bg-[#D4BDAC] :hover:bg-[#D4BDAC] :focus:ring-[#D4BDAC]">
-                Read more
-                <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
-                </svg>
-            </a>
-        </div>
-    </div>
-</div>
-
-
-
-<div class="w-full max-w-screen-xl mx-auto p-4 md:py-8 flex justify-center gap-x-4">
-    <div class="w-full bg-white border border-gray-200 rounded-lg shadow :bg-gray-800 :border-gray-700">
-        <ul class="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 rounded-t-lg bg-gray-50 :border-gray-700 :text-gray-400 :bg-gray-800" id="defaultTab" data-tabs-toggle="#defaultTabContent" role="tablist">
-            <li class="me-2">
-                <button id="about-tab" data-tabs-target="#about" type="button" role="tab" aria-controls="about" aria-selected="true" class="inline-block p-4 text-[#493628] rounded-ss-lg hover:bg-gray-100 :bg-gray-800 :hover:bg-gray-700 :text-[#493628]">About</button>
-            </li>
-            <li class="me-2">
-                <button id="services-tab" data-tabs-target="#services" type="button" role="tab" aria-controls="services" aria-selected="false" class="inline-block p-4 hover:text-gray-600 hover:bg-gray-100 :hover:bg-gray-700 :hover:text-gray-300">Services</button>
-            </li>
-            <li class="me-2">
-                <button id="statistics-tab" data-tabs-target="#statistics" type="button" role="tab" aria-controls="statistics" aria-selected="false" class="inline-block p-4 hover:text-gray-600 hover:bg-gray-100 :hover:bg-gray-700 :hover:text-gray-300">Facts</button>
-            </li>
-        </ul>
-        <div id="defaultTabContent">
-            <div class="p-4 bg-white rounded-lg md:p-8 :bg-gray-800" id="about" role="tabpanel" aria-labelledby="about-tab">
-                <h2 class="mb-3 text-3xl font-extrabold tracking-tight text-gray-900 :text-white">RasaJogja</h2>
-                <p class="mb-3 text-gray-500 :text-gray-400">Nikmati Sensasi Jogja di Setiap Suapan: Temukan kekayaan rasa dan keaslian kuliner khas Yogyakarta yang begitu memikat. Dari manisnya Gudeg legendaris hingga Sate Klathak yang pedas dan khas, setiap hidangan membawa cerita budaya, sejarah, dan tradisi Jogja. Kami telah memilihkan hidangan terbaik untuk Anda, jadi biarkan lidah Anda merasakan kelezatan autentik dan nikmati perjalanan rasa yang tak terlupakan di kota ini.</p>
-                <a href="#" class="inline-flex items-center font-medium text-[#493628] hover:text-[#493628] :text-[#493628] :hover:text-[#493628]">
-                    Learn more
-                    <svg class="w-2.5 h-2.5 ms-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
-                    </svg>
+<!-- Feature Cards Section -->
+<div class="w-full max-w-screen-xl mx-auto p-4 md:py-8 card-section">
+    <div class="flex flex-col md:flex-row justify-center gap-6 feature-cards">
+        <div class="feature-card max-w-sm">
+            <div class="overflow-hidden">
+                <img src="{% static 'images/slider4.jpg' %}" alt="Reports" class="w-full" />
+            </div>
+            <div class="p-6">
+                <h5 class="card-title">Comprehensive Reporting System</h5>
+                <p class="card-description">Access detailed reports and analytics to monitor performance, track key metrics, and make data-driven decisions for your organization.</p>
+                <a href="{% url 'report:laporan_form' %}" class="card-button">
+                    <i class="fas fa-chart-line"></i>
+                    View Reports
                 </a>
             </div>
-            <div class="hidden p-4 bg-white rounded-lg md:p-8 :bg-gray-800" id="services" role="tabpanel" aria-labelledby="services-tab">
-                <h2 class="mb-5 text-2xl font-extrabold tracking-tight text-gray-900 :text-white">RasaJogja: Jogja Dalam Satu Rasa</h2>
-                <ul role="list" class="space-y-4 text-gray-500 :text-gray-400">
-                    <li class="flex space-x-2 rtl:space-x-reverse items-center">
-                        <svg class="flex-shrink-0 w-3.5 h-3.5 text-[#493628] :text-[#493628]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
-                        </svg>
-                        <span class="leading-tight">Kuliner</span>
-                    </li>
-                    <li class="flex space-x-2 rtl:space-x-reverse items-center">
-                        <svg class="flex-shrink-0 w-3.5 h-3.5 text-[#493628] :text-[#493628]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
-                        </svg>
-                        <span class="leading-tight">Review</span>
-                    </li>
-                    <li class="flex space-x-2 rtl:space-x-reverse items-center">
-                        <svg class="flex-shrink-0 w-3.5 h-3.5 text-[#493628] :text-[#493628]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
-                        </svg>
-                        <span class="leading-tight">Rekomendasi dan Forum</span>
-                    </li>
-                    <li class="flex space-x-2 rtl:space-x-reverse items-center">
-                        <svg class="flex-shrink-0 w-3.5 h-3.5 text-[#493628] :text-[#493628]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
-                        </svg>
-                        <span class="leading-tight">Profile</span>
-                    </li>
-                    <li class="flex space-x-2 rtl:space-x-reverse items-center">
-                        <svg class="flex-shrink-0 w-3.5 h-3.5 text-[#493628] :text-[#493628]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
-                        </svg>
-                        <span class="leading-tight">Chat</span>
-                    </li>
-                    <!-- Additional list items... -->
-                </ul>
+        </div>
+        
+        <div class="feature-card max-w-sm">
+            <div class="overflow-hidden">
+                <img src="{% static 'images/slider5.jpg' %}" alt="Analytics" class="w-full" />
             </div>
-            <div class="hidden p-4 bg-white rounded-lg md:p-8 :bg-gray-800" id="statistics" role="tabpanel" aria-labelledby="statistics-tab">
-                <dl class="max-w-screen-xl gap-8 p-4 mx-auto text-gray-900 :text-white sm:p-8">
-                    <div class="flex flex-col">
-                        <h2 class="mb-3 text-3xl font-extrabold tracking-tight text-gray-900 :text-white">Developers</h2>
-                        <p class="mb-3 text-gray-500 :text-gray-400">Ardi - Clarissa - Diza - Naurah - Nelil</p>
-                    </div>
-                    <!-- Additional statistics... -->
-                </dl>
+            <div class="p-6">
+                <h5 class="card-title">Advanced Analytics & Insights</h5>
+                <p class="card-description">Discover powerful insights with our advanced analytics tools and get recommendations based on historical data and trends.</p>
+                <a href="{% url 'history:show_main' %}" class="card-button">
+                    <i class="fas fa-analytics"></i>
+                    View Analytics
+                </a>
             </div>
-            
         </div>
     </div>
 </div>
 
+<!-- Information Tabs Section -->
+<div class="w-full max-w-screen-xl mx-auto p-4 md:py-8">
+    <div class="info-section">
+        <div class="tab-navigation">
+            <button id="about-tab" data-tabs-target="#about" type="button" role="tab" aria-controls="about" aria-selected="true" class="tab-button active">
+                <i class="fas fa-info-circle mr-2"></i>About
+            </button>
+            <button id="services-tab" data-tabs-target="#services" type="button" role="tab" aria-controls="services" aria-selected="false" class="tab-button">
+                <i class="fas fa-cogs mr-2"></i>Services
+            </button>
+            <button id="statistics-tab" data-tabs-target="#statistics" type="button" role="tab" aria-controls="statistics" aria-selected="false" class="tab-button">
+                <i class="fas fa-users mr-2"></i>Team
+            </button>
+        </div>
+        
+        <div id="defaultTabContent">
+            <div class="tab-content" id="about" role="tabpanel" aria-labelledby="about-tab">
+                <h2 class="tab-title">PertaReport</h2>
+                <p class="tab-description">Experience the power of comprehensive reporting with PertaReport: Discover advanced analytics, streamlined workflows, and data-driven insights that empower your organization. From detailed performance metrics to real-time monitoring, every feature is designed to enhance productivity, improve decision-making, and drive organizational success. We've crafted the ultimate reporting solution to meet your business needs, so let our platform transform how you analyze data and unlock the potential for growth and efficiency in your operations.</p>
+                <a href="#" class="tab-link">
+                    Learn more
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            
+            <div class="tab-content hidden" id="services" role="tabpanel" aria-labelledby="services-tab">
+                <h2 class="tab-title">PertaReport: Complete Business Solutions</h2>
+                <ul class="service-list">
+                    <li class="service-item">
+                        <i class="fas fa-chart-bar service-icon"></i>
+                        <span class="service-text">Comprehensive Reporting & Analytics</span>
+                    </li>
+                    <li class="service-item">
+                        <i class="fas fa-star service-icon"></i>
+                        <span class="service-text">Performance Reviews & Ratings</span>
+                    </li>
+                    <li class="service-item">
+                        <i class="fas fa-history service-icon"></i>
+                        <span class="service-text">Historical Data & Trends Analysis</span>
+                    </li>
+                    <li class="service-item">
+                        <i class="fas fa-user service-icon"></i>
+                        <span class="service-text">User Profile Management</span>
+                    </li>
+                    <li class="service-item">
+                        <i class="fas fa-comments service-icon"></i>
+                        <span class="service-text">Real-time Communication Hub</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="tab-content hidden developers-section" id="statistics" role="tabpanel" aria-labelledby="statistics-tab">
+                <h2 class="developers-title">Development Team</h2>
+                <p class="developers-names">Ardi - Clarissa - Diza - Naurah - Nelil</p>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
+    // Tab functionality
     const tabButtons = document.querySelectorAll('[data-tabs-target]');
     const tabContents = document.querySelectorAll('[role="tabpanel"]');
 
     tabButtons.forEach(button => {
         button.addEventListener('click', () => {
-            tabButtons.forEach(btn => btn.classList.remove('text-[#493628]', ':text-[#493628]', 'bg-gray-100', ':bg-gray-800'));
+            tabButtons.forEach(btn => btn.classList.remove('active'));
             tabContents.forEach(content => content.classList.add('hidden'));
 
-            button.classList.add('text-[#493628]', ':text-[#493628]', 'bg-gray-100', ':bg-gray-800');
+            button.classList.add('active');
             const target = document.querySelector(button.getAttribute('data-tabs-target'));
             target.classList.remove('hidden');
         });
     });
 
-</script> 
-
-<!-- Slider Script -->
-<!-- Slider Script -->
-<script>
+    // Slider functionality
     const slider = document.getElementById('slider');
     const slides = slider.children;
     const totalSlides = slides.length;
     const dotsContainer = document.getElementById('dots-container');
     const dots = dotsContainer.children;
     let currentIndex = 0;
-  
+
     function updateSlider(index) {
-      slider.style.transform = `translateX(-${index * 100}%)`;
-      updateDots(index);
+        slider.style.transform = `translateX(-${index * 100}%)`;
+        updateDots(index);
     }
-  
+
     function updateDots(index) {
-      for (let i = 0; i < dots.length; i++) {
-        dots[i].classList.remove('active');
-      }
-      dots[index].classList.add('active');
+        for (let i = 0; i < dots.length; i++) {
+            dots[i].classList.remove('active');
+        }
+        dots[index].classList.add('active');
     }
-  
+
     for (let i = 0; i < dots.length; i++) {
-      dots[i].addEventListener('click', function() {
-        currentIndex = i;
-        updateSlider(currentIndex);
-      });
+        dots[i].addEventListener('click', function() {
+            currentIndex = i;
+            updateSlider(currentIndex);
+        });
     }
-  
-    // Automatically move the slider every 3 seconds
+
+    // Auto-slide functionality
     function autoSlide() {
-      currentIndex = (currentIndex + 1) % totalSlides; // Loop back to the first slide after the last one
-      updateSlider(currentIndex);
+        currentIndex = (currentIndex + 1) % totalSlides;
+        updateSlider(currentIndex);
     }
-    setInterval(autoSlide, 3000); // 3000ms = 3 seconds
-  
+    setInterval(autoSlide, 4000);
+
+    // Initialize slider
     updateSlider(currentIndex);
-  </script>
+</script>
 
-
-
-{% comment %} <a href="{% url 'main:logout' %}">
-    <button>Logout</button>
-</a>
-
-<a href="{% url 'katalog:main_view' %}">
-    <button>Product List</button>
-</a>
-
-<a href="{% url 'chat:create_chat' %}">
-    <button>Create Chat</button>
-</a> {% endcomment %}
 {% include 'footer.html' %}
 {% endblock content %}

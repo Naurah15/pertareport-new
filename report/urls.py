@@ -1,12 +1,9 @@
-
-from django.contrib import admin
 from django.urls import path
-from report.views import get_products_json, main_view
+from . import views
 
-app_name= 'report'
+app_name = 'report'
 
 urlpatterns = [
-    path('main-view/', main_view, name='main_view'),
-    path('view_json/', get_products_json, name='view_json'),
-  
+    path('laporan/', views.laporan_form_view, name='laporan_form'),
+    path('laporan/success/', views.laporan_success_view, name='laporan_success'),
 ]
