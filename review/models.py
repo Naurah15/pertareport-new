@@ -1,11 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
-from django.utils import timezone
+from report.models import Laporan, KegiatanLaporan
 
-class ReviewEntry(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)  # Menggunakan User bawaan Django
-    time = models.DateTimeField(default=timezone.now)
-    review_text = models.TextField()
-
-    def __str__(self):
-        return f"{self.user.username} - {self.product.nama}"
+# Tidak membuat model baru, hanya sebagai placeholder
+# supaya app terdeteksi oleh Django

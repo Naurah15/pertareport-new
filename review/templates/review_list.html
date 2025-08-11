@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Review Laporan</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+        }
+        th {
+            background: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Daftar Laporan</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>No. Dokumen</th>
+                <th>Lokasi</th>
+                <th>Nama Team Support</th>
+                <th>Tanggal Proses</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for laporan in laporan_list %}
+                <tr>
+                    <td>{{ laporan.no_document }}</td>
+                    <td>{{ laporan.lokasi }}</td>
+                    <td>{{ laporan.nama_team_support }}</td>
+                    <td>{{ laporan.tanggal_proses|date:"d M Y H:i" }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4">Tidak ada laporan.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

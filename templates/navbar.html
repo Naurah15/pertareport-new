@@ -1,14 +1,14 @@
 {% load static %}
 <style>
     .active-link {
-        color: #AB886D; /* Set the brown color */
+        color: #0f1983; /* Set the brown color */
     }
 </style>
 
 <nav class="bg-white :bg-gray-900 fixed w-full z-20 top-0 start-0 border-b border-gray-200 :border-gray-600">
     <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4 relative">
         <a href="https://github.com/RasaJogja/RasaJogja.git" class="flex items-center space-x-3 rtl:space-x-reverse">
-            <img src="{% static 'images/logo_jogja.png' %}" class="h-8" alt="Flowbite Logo">
+            <img src="{% static 'images/logo_pertamina.png' %}" class="h-8" alt="Flowbite Logo">
             <span class="self-center text-2xl font-semibold whitespace-nowrap :text-white">Pertareport</span>
         </a>
         <div class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
@@ -43,13 +43,10 @@
                     <a href="{% url 'report:laporan_form' %}" class="nav-link block py-2 px-3 text-gray-900 :text-white hover:bg-gray-100 md:hover:bg-transparent md:hover:text-[#AB886D] md:p-0 :hover:text-white">Report Form</a>
                 </li>
                 <li>
-                    <a href="{% url 'history:show_main' %}" class="nav-link block py-2 px-3 text-gray-900 :text-white hover:bg-gray-100 md:hover:bg-transparent md:hover:text-[#AB886D] md:p-0 :hover:text-white">History</a>
+                    <a href="{% url 'history:history_list' %}" class="nav-link block py-2 px-3 text-gray-900 :text-white hover:bg-gray-100 md:hover:bg-transparent md:hover:text-[#AB886D] md:p-0 :hover:text-white">History</a>
                 </li>
                 <li>
                     <a href="{% url 'profile:profile_view' %}" class="nav-link block py-2 px-3 text-gray-900 :text-white hover:bg-gray-100 md:hover:bg-transparent md:hover:text-[#AB886D] md:p-0 :hover:text-white">Profile</a>
-                </li>
-                <li>
-                    <a href="{% url 'chat:create_chat' %}" class="nav-link block py-2 px-3 text-gray-900 :text-white hover:bg-gray-100 md:hover:bg-transparent md:hover:text-[#AB886D] md:p-0 :hover:text-white">Chat</a>
                 </li>
             </ul>
         </div>

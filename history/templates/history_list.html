@@ -1,0 +1,298 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+{% include 'navbar.html' %}
+
+<!-- Spacer Div -->
+<div class="navbar-spacer"></div>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>History Laporan</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --pertamina-red: #E31E24;
+            --pertamina-dark-red: #B91C1C;
+            --pertamina-blue: #003876;
+            --pertamina-dark-blue: #002855;
+            --pertamina-gray: #6B7280;
+            --pertamina-light-gray: #F8FAFC;
+            --pertamina-dark-gray: #374151;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--pertamina-light-gray) 0%, #E5E7EB 100%);
+            min-height: 100vh;
+            color: var(--pertamina-dark-gray);
+        }
+
+        /* Spacer for navbar */
+        .navbar-spacer {
+            height: 80px;
+        }
+        /* Content Styling */
+        .content-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        h1 {
+            color: var(--pertamina-blue);
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 2rem;
+            text-align: center;
+            background: linear-gradient(90deg, var(--pertamina-red), var(--pertamina-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h2 {
+            color: var(--pertamina-blue);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 2rem 0 1rem 0;
+            padding: 1rem;
+            background: linear-gradient(135deg, #F8FAFC 0%, #E5E7EB 100%);
+            border-radius: 12px;
+            border-left: 4px solid var(--pertamina-red);
+        }
+
+        p {
+            color: var(--pertamina-gray);
+            margin-bottom: 1rem;
+            font-weight: 500;
+            padding: 0 1rem;
+        }
+
+        p strong {
+            color: var(--pertamina-dark-gray);
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 30px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.1);
+            border: 1px solid #E5E7EB;
+        }
+
+        th, td {
+            border: 1px solid #E5E7EB;
+            padding: 1rem;
+            vertical-align: top;
+        }
+
+        th {
+            background: linear-gradient(135deg, var(--pertamina-blue) 0%, var(--pertamina-dark-blue) 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.875rem;
+        }
+
+        tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        tbody tr:hover {
+            background: rgba(227, 30, 36, 0.02);
+        }
+
+        tbody tr:nth-child(even) {
+            background: rgba(248, 250, 252, 0.5);
+        }
+
+        tbody tr:nth-child(even):hover {
+            background: rgba(227, 30, 36, 0.03);
+        }
+
+        .foto {
+            max-width: 150px;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .foto:hover {
+            transform: scale(1.05);
+        }
+
+        /* Empty state styling */
+        .content-wrapper > p:last-child {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--pertamina-gray);
+            margin-top: 3rem;
+            padding: 2rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Floating Animation */
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .floating-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(227, 30, 36, 0.03);
+            animation: float 12s ease-in-out infinite;
+        }
+
+        .floating-circle:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 20%;
+            left: 5%;
+            animation-delay: 0s;
+        }
+
+        .floating-circle:nth-child(2) {
+            width: 60px;
+            height: 60px;
+            top: 60%;
+            right: 10%;
+            animation-delay: 4s;
+            background: rgba(0, 56, 118, 0.03);
+        }
+
+        .floating-circle:nth-child(3) {
+            width: 100px;
+            height: 100px;
+            top: 80%;
+            left: 15%;
+            animation-delay: 8s;
+        }
+
+        @keyframes float {
+            0%, 100% { 
+                transform: translateY(0px) translateX(0px); 
+                opacity: 0.5;
+            }
+            33% { 
+                transform: translateY(-20px) translateX(15px); 
+                opacity: 0.8;
+            }
+            66% { 
+                transform: translateY(15px) translateX(-10px); 
+                opacity: 0.6;
+            }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .content-wrapper {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.2rem;
+            }
+
+            table {
+                font-size: 0.875rem;
+            }
+
+            th, td {
+                padding: 0.75rem 0.5rem;
+            }
+
+            .foto {
+                max-width: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Animation Elements -->
+    <div class="floating-elements">
+        <div class="floating-circle"></div>
+        <div class="floating-circle"></div>
+        <div class="floating-circle"></div>
+    </div>
+
+    {% include 'navbar.html' %}
+
+    <!-- Spacer Div -->
+    <div class="navbar-spacer"></div>
+
+    <div class="content-wrapper">
+        <h1>Daftar Laporan</h1>
+
+        {% for laporan in laporan_list %}
+            <h2>{{ laporan.no_document }} - {{ laporan.lokasi }}</h2>
+            <p><strong>Nama Team Support:</strong> {{ laporan.nama_team_support }}</p>
+            <p><strong>Tanggal Proses:</strong> {{ laporan.tanggal_proses|date:"d M Y H:i" }}</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Jenis Kegiatan</th>
+                        <th>Detail / Remark</th>
+                        <th>Foto</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for kegiatan in laporan.kegiatan_list.all %}
+                        <tr>
+                            <td>{{ kegiatan.get_kegiatan_display_name }}</td>
+                            <td>{{ kegiatan.remark }}</td>
+                            <td>
+                                {% if kegiatan.foto %}
+                                    <img src="{{ kegiatan.foto.url }}" class="foto" alt="Foto Kegiatan">
+                                {% else %}
+                                    Tidak ada foto
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="3">Tidak ada kegiatan yang tercatat.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% empty %}
+            <p>Tidak ada laporan yang tersedia.</p>
+        {% endfor %}
+    </div>
+
+    <script>
+        // Any additional JavaScript can go here if needed
+    </script>
+</body>
+</html>
+
+{% include 'footer.html' %}
+{% endblock content %}'
