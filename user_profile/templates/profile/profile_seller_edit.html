@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% include 'navbar_seller.html' %}
+<section class="min-h-screen w-screen bg-slate-100">
+    <div class="container mx-auto flex flex-col gap-5 pt-20">
+        <h2 class="font-bold text-3xl text-center text-black">EDIT STORE</h2>
+        <main class="w-full md:w-1/2 mb-16 rounded-lg p-5 flex flex-col bg-white justify-center mx-auto gap-5 items-center shadow-md">
+            <form method="POST" class="w-full flex flex-col gap-3">
+                {% csrf_token %}
+                {% if form.errors %}
+                <div class="text-red-600">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <div class="hidden">
+                    {{ form.profile_picture }}
+                    {{ form.city}}
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label for="id_store_name" class="text-sm font-medium text-gray-700">Store Name</label>
+                    {{ form.store_name}}
+                </div>
+    
+                <div class="flex flex-col gap-1">
+                    <label for="id_subdistrict" class="text-sm font-medium text-gray-700">Subdistrict</label>
+                    <select name="subdistrict" id="id_subdistrict" class="border bg-white border-gray-300 p-2 rounded-md">
+                        {% for value, display in form.subdistrict.field.choices %}
+                            <option value="{{ value }}"{% if profile.subdistrict == value %} selected{% endif %}>{{ display }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+    
+                <div class="flex flex-col gap-1">
+                    <label for="id_village" class="text-sm font-medium text-gray-700">Village</label>
+                    <select name="village" id="id_village" class="border bg-white border-gray-300 p-2 rounded-md">
+                        {% for value, display in form.village.field.choices %}
+                            <option value="{{ value }}"{% if profile.village == value %} selected{% endif %}>{{ display }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+    
+                <div class="flex flex-col gap-1">
+                    <label for="id_street_address" class="text-sm font-medium text-gray-700">Street Address</label>
+                    {{ form.address}}
+                </div>
+
+    
+                <div class="flex flex-col gap-1">
+                    <label for="id_google_maps_link" class="text-sm font-medium text-gray-700">Google Maps Link</label>
+                    {{ form.maps}}
+                </div>
+    
+                <div class="flex flex-col gap-2 justify-end mt-4">
+                    <button class="edit-btn w-full py-2.5 rounded-md bg-blue-700 text-white font-semibold">Save Changes</button>
+                    <a href="/profile/seller" class="text-center w-full py-2.5 rounded-md bg-red-500 text-white font-semibold" onclick="return confirmCancel()">Cancel</a>
+                </div>
+            </form>
+        </main>
+    </div>
+</section>
+
+<script>
+    function confirmCancel() {
+        return confirm("Are you sure you want to cancel? Your changes will be lost! Take a moment to review your updates.");
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.edit-btn').forEach(function(button) {
+            button.addEventListener('click', function() {
+                fetch("{% url 'user_profile:profile_buyer_edit' %}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                    },
+                })
+                .then(data => {
+                    window.location.href = "{% url 'user_profile:profile_seller' %}";
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+    });
+</script>
+{% endblock content %}

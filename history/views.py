@@ -9,7 +9,7 @@ def history_list(request):
     user = request.user
 
     # Admin bisa lihat semua laporan
-    if user.username == 'admin' and user.check_password('Admin1234'):
+    if user.username == 'admin' and user.check_password('Mimin1234%'):
         laporan_list = Laporan.objects.all().order_by('-tanggal_proses')
     else:
         laporan_list = Laporan.objects.filter(

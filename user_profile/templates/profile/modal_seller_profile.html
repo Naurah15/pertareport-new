@@ -1,0 +1,75 @@
+<!-- Modal Edit Profile Picture -->
+<div class="hidden fixed inset-0 z-50 flex items-center justify-center" id="modal-id">
+  <div class="relative w-full max-w-lg mx-auto bg-white rounded-lg shadow-lg">
+    <!-- Modal Content -->
+    <div class="flex flex-col w-full">
+      <div class="flex items-center justify-between p-5 border-b border-gray-300 rounded-t-lg">
+        <h3 class="text-2xl font-bold text-gray-700">Edit Profile Picture</h3>
+        <button class="text-gray-600 text-2xl font-bold focus:outline-none" onclick="toggleModal('modal-id')">×</button>
+      </div>
+
+      <div class="p-6">
+        <div class="flex justify-center mb-5">
+          <img src="{{ profile.profile_picture }}" alt="Profile Picture" class="object-cover w-40 h-40 rounded-full shadow-lg">
+        </div>
+        <form method="POST" enctype="multipart/form-data" id="modal-form" class="flex flex-col gap-5">
+          {% csrf_token %}
+          <div class="flex flex-col gap-2">
+            <label for="id_profile_picture" class="text-sm font-medium text-gray-700">New Profile Picture</label>
+            {{ form.profile_picture }}
+          </div>
+          
+          <div class="hidden">
+            {{ form.store_name }}
+            {{ form.city }}
+            {{ form.price }}
+            <select name="subdistrict" id="id_subdistrict" class="border bg-white border-gray-300 p-2 rounded-md">
+              {% for value, display in form.subdistrict.field.choices %}
+                <option value="{{ value }}"{% if profile.subdistrict == value %} selected{% endif %}>{{ display }}</option>
+              {% endfor %}
+            </select>
+            <select name="village" id="id_village" class="border bg-white border-gray-300 p-2 rounded-md">
+              {% for value, display in form.village.field.choices %}
+                <option value="{{ value }}"{% if profile.village == value %} selected{% endif %}>{{ display }}</option>
+              {% endfor %}
+            </select>                 
+            {{ form.address }}
+            {{ form.maps }}
+          </div>
+        </form>
+      </div>
+      
+      <div class="flex items-center justify-end p-6 border-t border-gray-300">
+        <button class="text-red-500 font-bold uppercase px-4 py-2 text-sm focus:outline-none mr-2" type="button" onclick="toggleModal('modal-id')">Cancel</button>
+        <button class=".edit-btn bg-green-600 text-white font-bold uppercase text-sm px-4 py-2 rounded shadow-lg hover:bg-green-700 transition duration-150" form="modal-form">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="hidden fixed inset-0 z-40 bg-black opacity-50" id="modal-id-backdrop"></div>
+
+<script type="text/javascript">
+  function toggleModal(modalID) {
+    document.getElementById(modalID).classList.toggle("hidden");
+    document.getElementById(modalID + "-backdrop").classList.toggle("hidden");
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.edit-btn').forEach(function(button) {
+          button.addEventListener('click', function() {
+              fetch("{% url 'user_profile:profile_buyer_edit' %}", {
+                  method: 'POST',
+                  headers: {
+                      'X-CSRFToken': '{{ csrf_token }}',
+                  },
+              })
+              .then(data => {
+                  window.location.href = "{% url 'user_profile:profile_buyer' %}";
+              })
+              .catch(error => console.error('Error:', error));
+          });
+      });
+  });
+</script>
