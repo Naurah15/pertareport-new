@@ -69,6 +69,52 @@
             background: linear-gradient(135deg, #F8FAFC 0%, #E5E7EB 100%);
             border-radius: 12px;
             border-left: 4px solid var(--pertamina-red);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .download-links {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .download-btn.excel {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: white;
+        }
+
+        .download-btn.excel:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .download-btn.pdf {
+            background: linear-gradient(135deg, var(--pertamina-red) 0%, var(--pertamina-dark-red) 100%);
+            color: white;
+        }
+
+        .download-btn.pdf:hover {
+            background: linear-gradient(135deg, var(--pertamina-dark-red) 0%, #991B1B 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(227, 30, 36, 0.3);
         }
 
         p {
@@ -218,6 +264,18 @@
 
             h2 {
                 font-size: 1.2rem;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .download-links {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .download-btn {
+                font-size: 0.75rem;
+                padding: 0.4rem 0.8rem;
             }
 
             table {
@@ -251,7 +309,19 @@
         <h1>Daftar Laporan</h1>
 
         {% for laporan in laporan_list %}
-            <h2>{{ laporan.no_document }} - {{ laporan.lokasi }}</h2>
+            <h2>
+                <span>{{ laporan.no_document }} - {{ laporan.lokasi }}</span>
+                <div class="download-links">
+                    <a href="{% url 'history:download_excel' laporan.id %}" class="download-btn excel">
+                        <i class="fas fa-file-excel"></i>
+                        Excel
+                    </a>
+                    <a href="{% url 'history:download_pdf' laporan.id %}" class="download-btn pdf">
+                        <i class="fas fa-file-pdf"></i>
+                        PDF
+                    </a>
+                </div>
+            </h2>
             <p><strong>Nama Team Support:</strong> {{ laporan.nama_team_support }}</p>
             <p><strong>Tanggal Proses:</strong> {{ laporan.tanggal_proses|date:"d M Y H:i" }}</p>
 
@@ -295,4 +365,4 @@
 </html>
 
 {% include 'footer.html' %}
-{% endblock content %}'
+{% endblock content %}
