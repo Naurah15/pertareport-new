@@ -42,7 +42,7 @@ class KegiatanLaporan(models.Model):
     kegiatan = models.CharField(max_length=50, choices=KEGIATAN_CHOICES)
     kegiatan_other = models.CharField(max_length=200, blank=True, null=True)  # untuk custom kegiatan
     remark = models.TextField()
-    foto = models.ImageField(upload_to='laporan_foto/', blank=True, null=True)
+    foto = models.ImageField(upload_to='laporan_foto/')
     
     def get_kegiatan_display_name(self):
         if self.kegiatan == 'other' and self.kegiatan_other:

@@ -1,4 +1,4 @@
-
+import os
 import openpyxl
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -9,6 +9,8 @@ from django.shortcuts import get_object_or_404
 from report.models import Laporan
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
+from openpyxl.drawing.image import Image as XLImage
+from django.conf import settings
 
 
 @login_required
@@ -27,17 +29,16 @@ def history_list(request):
         'laporan_list': laporan_list
     })
 
+
 @login_required
 def download_laporan_excel(request, pk):
     laporan = get_object_or_404(Laporan, pk=pk)
     kegiatan_list = laporan.kegiatan_list.all()
 
-    # Buat workbook dan sheet
     wb = openpyxl.Workbook()
     ws = wb.active
     ws.title = "Laporan"
 
-    # Header
     ws.append(["No Document", laporan.no_document])
     ws.append(["Lokasi", laporan.lokasi])
     ws.append(["Nama Team Support", laporan.nama_team_support])
@@ -45,22 +46,29 @@ def download_laporan_excel(request, pk):
     ws.append([])
     ws.append(["Jenis Kegiatan", "Remark"])
 
-    # Data kegiatan
     for kegiatan in kegiatan_list:
         ws.append([kegiatan.get_kegiatan_display_name(), kegiatan.remark])
 
-    # Response download
+    # Tambah gambar kalau ada
+    if kegiatan.foto:
+        img_path = os.path.join(settings.MEDIA_ROOT, str(kegiatan.foto))
+        if os.path.exists(img_path):
+            img = XLImage(img_path)
+            img.width = 300  # resize kalau mau
+            img.height = 200
+            ws.add_image(img, "E1")  # posisikan di cell E1
+
     response = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
     response['Content-Disposition'] = f'attachment; filename="Laporan_{laporan.no_document}.xlsx"'
     wb.save(response)
     return response
+
 
 @login_required
 def download_laporan_pdf(request, pk):
     laporan = get_object_or_404(Laporan, pk=pk)
     kegiatan_list = laporan.kegiatan_list.all()
 
-    # Response download
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="Laporan_{laporan.no_document}.pdf"'
 
@@ -82,7 +90,15 @@ def download_laporan_pdf(request, pk):
         p.drawString(100, y, f"{kegiatan.get_kegiatan_display_name()} - {kegiatan.remark}")
         y -= 20
 
+    # Tambah gambar kalau ada
+    if kegiatan.foto:
+        img_path = os.path.join(settings.MEDIA_ROOT, str(kegiatan.foto))
+        if os.path.exists(img_path):
+            p.drawImage(img_path, 100, y-200, width=300, height=200)  # atur posisi dan ukuran
+            y -= 220
+
     p.showPage()
     p.save()
     return response
+
 
