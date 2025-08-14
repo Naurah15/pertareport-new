@@ -310,7 +310,13 @@
 
         {% for laporan in laporan_list %}
             <h2>
-                <span>{{ laporan.no_document }} - {{ laporan.lokasi }}</span>
+                <span>
+                {{ laporan.no_document }} - 
+                    <a href="https://www.google.com/maps?q={{ laporan.lokasi }}" target="_blank">
+                        {{ laporan.lokasi }}
+                    </a>
+                </span>
+
                 <div class="download-links">
                     <a href="{% url 'history:download_excel' laporan.id %}" class="download-btn excel">
                         <i class="fas fa-file-excel"></i>

@@ -11,6 +11,8 @@ from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 from openpyxl.drawing.image import Image as XLImage
 from django.conf import settings
+from openpyxl.utils import get_column_letter
+from reportlab.lib.units import inch
 
 
 @login_required
@@ -29,7 +31,6 @@ def history_list(request):
         'laporan_list': laporan_list
     })
 
-
 @login_required
 def download_laporan_excel(request, pk):
     laporan = get_object_or_404(Laporan, pk=pk)
@@ -40,29 +41,43 @@ def download_laporan_excel(request, pk):
     ws.title = "Laporan"
 
     ws.append(["No Document", laporan.no_document])
-    ws.append(["Lokasi", laporan.lokasi])
+    ws.append(["Lokasi", f'=HYPERLINK("https://www.google.com/maps?q={laporan.lokasi}", "{laporan.lokasi}")'])
     ws.append(["Nama Team Support", laporan.nama_team_support])
     ws.append(["Tanggal Proses", laporan.tanggal_proses.strftime("%d-%m-%Y %H:%M")])
     ws.append([])
-    ws.append(["Jenis Kegiatan", "Remark"])
+    ws.append(["Jenis Kegiatan", "Remark", "Foto"])
 
+    row_num = ws.max_row + 1
     for kegiatan in kegiatan_list:
-        ws.append([kegiatan.get_kegiatan_display_name(), kegiatan.remark])
+        ws.append([kegiatan.get_kegiatan_display_name(), kegiatan.remark, ""])
+        foto_col = 3  # kolom C
 
-    # Tambah gambar kalau ada
-    if kegiatan.foto:
-        img_path = os.path.join(settings.MEDIA_ROOT, str(kegiatan.foto))
-        if os.path.exists(img_path):
-            img = XLImage(img_path)
-            img.width = 300  # resize kalau mau
-            img.height = 200
-            ws.add_image(img, "E1")  # posisikan di cell E1
+        # Foto utama dari KegiatanLaporan
+        if kegiatan.foto:
+            img_path = os.path.join(settings.MEDIA_ROOT, str(kegiatan.foto))
+            if os.path.exists(img_path):
+                img = XLImage(img_path)
+                img.width = 300
+                img.height = 200
+                ws.add_image(img, f"{get_column_letter(foto_col)}{row_num}")
+                foto_col += 1
+
+        # Foto tambahan dari KegiatanFoto
+        for foto in kegiatan.foto_list.all():
+            img_path = os.path.join(settings.MEDIA_ROOT, str(foto.foto))
+            if os.path.exists(img_path):
+                img = XLImage(img_path)
+                img.width = 300
+                img.height = 200
+                ws.add_image(img, f"{get_column_letter(foto_col)}{row_num}")
+                foto_col += 1
+
+        row_num += 1
 
     response = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
     response['Content-Disposition'] = f'attachment; filename="Laporan_{laporan.no_document}.xlsx"'
     wb.save(response)
     return response
-
 
 @login_required
 def download_laporan_pdf(request, pk):
@@ -78,27 +93,49 @@ def download_laporan_pdf(request, pk):
     p.setFont("Helvetica-Bold", 14)
     p.drawString(100, y, f"Laporan: {laporan.no_document}")
     y -= 20
+
     p.setFont("Helvetica", 12)
-    p.drawString(100, y, f"Lokasi: {laporan.lokasi}")
+    p.drawString(100, y, "Lokasi: ")
+    p.linkURL(f"https://www.google.com/maps?q={laporan.lokasi}", (150, y-2, 400, y+10))
+    p.drawString(150, y, laporan.lokasi)
     y -= 20
+
     p.drawString(100, y, f"Nama Team Support: {laporan.nama_team_support}")
     y -= 20
     p.drawString(100, y, f"Tanggal Proses: {laporan.tanggal_proses.strftime('%d-%m-%Y %H:%M')}")
     y -= 40
 
     for kegiatan in kegiatan_list:
-        p.drawString(100, y, f"{kegiatan.get_kegiatan_display_name()} - {kegiatan.remark}")
+        p.setFont("Helvetica-Bold", 12)
+        p.drawString(100, y, kegiatan.get_kegiatan_display_name())
+        y -= 15
+        p.setFont("Helvetica", 11)
+        p.drawString(100, y, kegiatan.remark)
         y -= 20
 
-    # Tambah gambar kalau ada
-    if kegiatan.foto:
-        img_path = os.path.join(settings.MEDIA_ROOT, str(kegiatan.foto))
-        if os.path.exists(img_path):
-            p.drawImage(img_path, 100, y-200, width=300, height=200)  # atur posisi dan ukuran
-            y -= 220
+        # Foto utama dari KegiatanLaporan
+        if kegiatan.foto:
+            img_path = os.path.join(settings.MEDIA_ROOT, str(kegiatan.foto))
+            if os.path.exists(img_path):
+                p.drawImage(img_path, 100, y-200, width=300, height=200)
+                y -= 220
+
+        # Foto tambahan dari KegiatanFoto
+        for foto in kegiatan.foto_list.all():
+            img_path = os.path.join(settings.MEDIA_ROOT, str(foto.foto))
+            if os.path.exists(img_path):
+                p.drawImage(img_path, 100, y-200, width=300, height=200)
+                y -= 220
+
+        y -= 20
+
+        if y < 100:  # page break
+            p.showPage()
+            y = 800
 
     p.showPage()
     p.save()
     return response
+
 
 

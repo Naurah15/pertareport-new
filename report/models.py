@@ -51,3 +51,15 @@ class KegiatanLaporan(models.Model):
 
     def __str__(self):
         return f"{self.laporan.no_document} - {self.get_kegiatan_display_name()}"
+    
+
+class KegiatanFoto(models.Model):
+    kegiatan = models.ForeignKey(
+        KegiatanLaporan,
+        on_delete=models.CASCADE,
+        related_name='foto_list'
+    )
+    foto = models.ImageField(upload_to='laporan_foto/')
+
+    def __str__(self):
+        return f"Foto untuk {self.kegiatan.get_kegiatan_display_name()}"
