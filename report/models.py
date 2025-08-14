@@ -63,3 +63,4 @@ class KegiatanFoto(models.Model):
 
     def __str__(self):
         return f"Foto untuk {self.kegiatan.get_kegiatan_display_name()}"
+
