@@ -1,6 +1,13 @@
 from django.db import models
 from django.utils import timezone
 
+class JenisKegiatan(models.Model):
+    nama = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.nama
+
+
 class Laporan(models.Model):
     lokasi = models.CharField(max_length=200)  # Tag lokasi dari geo
     nama_team_support = models.CharField(max_length=200)
@@ -29,25 +36,26 @@ class Laporan(models.Model):
         return self.no_document
 
 class KegiatanLaporan(models.Model):
-    KEGIATAN_CHOICES = [
-        ('melayani_pengisian_bbm', 'Melayani pengisian BBM'),
-        ('mengelola_transaksi', 'Mengelola transaksi'),
-        ('menjaga_kebersihan_area_spbu', 'Menjaga kebersihan area SPBU'),
-        ('memantau_stok', 'Memantau stok'),
-        ('memperbaiki_kerusakan', 'Memperbaiki kerusakan'),
-        ('other', 'Other'),
-    ]
     
     laporan = models.ForeignKey(Laporan, on_delete=models.CASCADE, related_name='kegiatan_list')
-    kegiatan = models.CharField(max_length=50, choices=KEGIATAN_CHOICES)
+    kegiatan = models.ForeignKey(JenisKegiatan, on_delete=models.CASCADE)
     kegiatan_other = models.CharField(max_length=200, blank=True, null=True)  # untuk custom kegiatan
     remark = models.TextField()
     foto = models.ImageField(upload_to='laporan_foto/')
     
     def get_kegiatan_display_name(self):
-        if self.kegiatan == 'other' and self.kegiatan_other:
+        # Kalau user isi manual, pakai itu
+        if self.kegiatan_other:
             return self.kegiatan_other
-        return self.get_kegiatan_display()
+        # Kalau tidak, pakai nama dari dropdown
+        return self.kegiatan.nama if self.kegiatan else ''
+    
+    def save(self, *args, **kwargs):
+        if self.kegiatan_other and (not self.kegiatan or self.kegiatan.nama.lower() != 'other'):
+            other_obj, _ = JenisKegiatan.objects.get_or_create(nama='Other')
+            self.kegiatan = other_obj
+        super().save(*args, **kwargs)
+
 
     def __str__(self):
         return f"{self.laporan.no_document} - {self.get_kegiatan_display_name()}"

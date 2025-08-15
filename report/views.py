@@ -3,6 +3,9 @@ from django.utils import timezone
 from django.contrib import messages
 from .forms import LaporanForm, KegiatanFormSet
 from .models import Laporan
+from .models import Laporan, JenisKegiatan
+from django.contrib.auth.decorators import login_required
+from .forms import JenisKegiatanForm
 
 def laporan_form_view(request):
     if request.method == 'POST':
@@ -55,3 +58,29 @@ def laporan_form_view(request):
 
 def laporan_success_view(request):
     return render(request, 'laporan_success.html')
+
+@login_required
+def manage_jenis_kegiatan(request):
+    if request.user.username != "admin":
+        messages.error(request, "Anda tidak punya akses.")
+        return redirect('report:laporan_form')
+
+    if request.method == "POST":
+        if 'delete_id' in request.POST:
+            JenisKegiatan.objects.filter(id=request.POST['delete_id']).delete()
+            messages.success(request, "Jenis kegiatan berhasil dihapus.")
+            return redirect('report:manage_jenis_kegiatan')
+        else:
+            form = JenisKegiatanForm(request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Jenis kegiatan berhasil ditambahkan.")
+                return redirect('report:manage_jenis_kegiatan')
+    else:
+        form = JenisKegiatanForm()
+
+    kegiatan_list = JenisKegiatan.objects.all()
+    return render(request, "manage_jenis_kegiatan.html", {
+        "form": form,
+        "kegiatan_list": kegiatan_list
+    })

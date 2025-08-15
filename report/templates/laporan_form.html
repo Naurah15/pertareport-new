@@ -260,6 +260,29 @@
             margin-top: 0.25rem;
         }
 
+        .manage-kegiatan-btn {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .manage-kegiatan-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 10px rgba(245, 158, 11, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
         @media (max-width: 768px) {
             .main-container {
                 margin-left: 1rem;
@@ -349,6 +372,13 @@
                     <div class="form-section">
                         <h4><i class="fas fa-tasks"></i>Daftar Kegiatan</h4>
                         
+                        {% if user.username == "admin" %}
+                            <a href="{% url 'report:manage_jenis_kegiatan' %}" class="manage-kegiatan-btn">
+                                <i class="fas fa-cog"></i>
+                                Kelola Jenis Kegiatan
+                            </a>
+                        {% endif %}
+                        
                         <div id="kegiatan-container">
                             {% for form in kegiatan_formset %}
                                 <div class="kegiatan-item" data-form-index="{{ forloop.counter0 }}">
@@ -360,7 +390,6 @@
                                             </button>
                                         {% endif %}
                                     </div>
-
                                     <!-- Hidden fields for formset -->
                                     {% for hidden in form.hidden_fields %}
                                         {{ hidden }}
@@ -377,7 +406,6 @@
                                             </div>
                                         </div>
                                     </div>
-
                                     <div class="mb-3">
                                         <label class="form-label">Detail</label>
                                         {{ form.remark }}
@@ -414,7 +442,9 @@
     <script>
         let formIndex = "{{ kegiatan_formset.total_form_count|default:0 }}";
         formIndex = parseInt(formIndex);
-
+        
+        // Simpan opsi jenis kegiatan dari server untuk digunakan saat menambah form baru
+        let jenisKegiatanOptions = [];
 
         // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
@@ -429,9 +459,21 @@
                 minute: '2-digit'
             });
 
+            // Ambil opsi jenis kegiatan dari form yang ada
+            const firstSelect = document.querySelector('select[name*="-kegiatan"]');
+            if (firstSelect) {
+                jenisKegiatanOptions = Array.from(firstSelect.options).map(option => ({
+                    value: option.value,
+                    text: option.textContent
+                }));
+            }
+
             // Initialize existing forms
-            document.querySelectorAll('.kegiatan-select').forEach(function(select) {
+            document.querySelectorAll('select[name*="-kegiatan"]').forEach(function(select) {
                 toggleOtherInput(select);
+                select.addEventListener('change', function() {
+                    toggleOtherInput(this);
+                });
             });
 
             // Get location
@@ -456,18 +498,64 @@
             }
         }
 
+        function ensureOtherOption() {
+            // Pastikan setiap select kegiatan memiliki opsi "Other" atau "Lainnya"
+            document.querySelectorAll('select[name*="-kegiatan"]').forEach(function(select) {
+                // Cek apakah sudah ada opsi "other" atau "lainnya"
+                let hasOtherOption = false;
+                for (let option of select.options) {
+                    if (option.text.toLowerCase() === 'other' || option.text.toLowerCase() === 'lainnya') {
+                        hasOtherOption = true;
+                        break;
+                    }
+                }
+                
+                // Update jenisKegiatanOptions untuk form baru
+                if (select === document.querySelector('select[name*="-kegiatan"]')) {
+                    jenisKegiatanOptions = Array.from(select.options).map(option => ({
+                        value: option.value,
+                        text: option.textContent
+                    }));
+                }
+            });
+        }
+
         function toggleOtherInput(selectElement) {
             const container = selectElement.closest('.kegiatan-item');
-            const otherInput = container.querySelector('.other-input-container input');
+            const otherInputContainer = container.querySelector('.other-input-container');
+            const otherInput = otherInputContainer.querySelector('input[name*="-kegiatan_other"]');
             
-            if (selectElement.value === 'other') {
+            // Get selected option text to check if it's "Other"
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+            const selectedText = selectedOption ? selectedOption.text.toLowerCase() : '';
+            
+            if (selectedText === 'other' || selectedText === 'lainnya') {
                 otherInput.style.display = 'block';
                 otherInput.required = true;
+                otherInput.placeholder = 'Masukkan jenis kegiatan lainnya';
+                // Tambahkan label jika belum ada
+                if (!otherInputContainer.querySelector('label')) {
+                    const label = document.createElement('label');
+                    label.className = 'form-label';
+                    label.textContent = 'Jenis Kegiatan Lainnya';
+                    otherInputContainer.insertBefore(label, otherInput);
+                }
             } else {
                 otherInput.style.display = 'none';
                 otherInput.required = false;
                 otherInput.value = '';
+                // Hapus label jika ada
+                const label = otherInputContainer.querySelector('label');
+                if (label) {
+                    label.remove();
+                }
             }
+        }
+
+        function generateKegiatanOptions() {
+            return jenisKegiatanOptions.map(option => 
+                `<option value="${option.value}">${option.text}</option>`
+            ).join('');
         }
 
         function addKegiatan() {
@@ -493,13 +581,7 @@
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Jenis Kegiatan</label>
                         <select name="kegiatan_list-${formIndex}-kegiatan" class="form-control kegiatan-select" id="id_kegiatan_list-${formIndex}-kegiatan" onchange="toggleOtherInput(this)">
-                            <option value="">---------</option>
-                            <option value="melayani_pengisian_bbm">Melayani pengisian BBM</option>
-                            <option value="mengelola_transaksi">Mengelola transaksi</option>
-                            <option value="menjaga_kebersihan_area_spbu">Menjaga kebersihan area SPBU</option>
-                            <option value="memantau_stok">Memantau stok</option>
-                            <option value="memperbaiki_kerusakan">Memperbaiki kerusakan</option>
-                            <option value="other">Other</option>
+                            ${generateKegiatanOptions()}
                         </select>
                     </div>
                     <div class="col-md-6 mb-3">
@@ -558,8 +640,8 @@
             let hasError = false;
             
             kegiatanItems.forEach(function(item) {
-                const kegiatanSelect = item.querySelector('.kegiatan-select');
-                const otherInput = item.querySelector('.other-input-container input');
+                const kegiatanSelect = item.querySelector('select[name*="-kegiatan"]');
+                const otherInput = item.querySelector('input[name*="-kegiatan_other"]');
                 const remarkTextarea = item.querySelector('textarea');
                 
                 // Validate kegiatan selection
@@ -570,8 +652,11 @@
                     kegiatanSelect.style.borderColor = '#E5E7EB';
                 }
                 
-                // Validate other input if selected
-                if (kegiatanSelect.value === 'other' && !otherInput.value.trim()) {
+                // Validate other input if "Other" is selected
+                const selectedOption = kegiatanSelect.options[kegiatanSelect.selectedIndex];
+                const selectedText = selectedOption ? selectedOption.text.toLowerCase() : '';
+                
+                if ((selectedText === 'other' || selectedText === 'lainnya') && !otherInput.value.trim()) {
                     otherInput.style.borderColor = '#DC2626';
                     hasError = true;
                 } else {
