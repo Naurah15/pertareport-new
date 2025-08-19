@@ -1,11 +1,216 @@
+import json
+import os
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.contrib import messages
 from .forms import LaporanForm, KegiatanFormSet
 from .models import Laporan
-from .models import Laporan, JenisKegiatan
 from django.contrib.auth.decorators import login_required
 from .forms import JenisKegiatanForm
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+from django.utils.decorators import method_decorator
+from .models import Laporan, KegiatanLaporan, JenisKegiatan, KegiatanFoto
+from django.core.files.storage import default_storage
+from django.conf import settings
+
+@csrf_exempt
+@require_http_methods(["GET"])
+def get_jenis_kegiatan(request):
+    """API untuk mendapatkan daftar jenis kegiatan"""
+    try:
+        jenis_kegiatan = JenisKegiatan.objects.all().order_by('nama')
+        data = []
+        for jenis in jenis_kegiatan:
+            data.append({
+                'id': jenis.id,
+                'nama': jenis.nama
+            })
+        
+        return JsonResponse(data, safe=False)
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=500)
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def create_laporan(request):
+    """API untuk membuat laporan baru"""
+    try:
+        data = json.loads(request.body)
+        
+        # Validasi data yang diperlukan
+        required_fields = ['lokasi', 'nama_team_support', 'remark', 'kegiatan_id']
+        for field in required_fields:
+            if field not in data or not str(data[field]).strip():
+                return JsonResponse({
+                    'status': 'error',
+                    'message': f'Field {field} is required'
+                }, status=400)
+        
+        # Buat laporan baru
+        laporan = Laporan.objects.create(
+            lokasi=data['lokasi'].strip(),
+            nama_team_support=data['nama_team_support'].strip()
+        )
+        
+        # Buat kegiatan laporan
+        try:
+            jenis_kegiatan = JenisKegiatan.objects.get(id=data['kegiatan_id'])
+        except JenisKegiatan.DoesNotExist:
+            laporan.delete()  # Rollback
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Jenis kegiatan tidak ditemukan'
+            }, status=400)
+        
+        # Handle kegiatan_other
+        kegiatan_other = data.get('kegiatan_other', '').strip() if data.get('kegiatan_other') else ''
+        
+        kegiatan_laporan = KegiatanLaporan.objects.create(
+            laporan=laporan,
+            kegiatan=jenis_kegiatan,
+            kegiatan_other=kegiatan_other,
+            remark=data['remark'].strip()
+        )
+        
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Laporan berhasil dibuat',
+            'laporan_id': laporan.id,
+            'no_document': laporan.no_document,
+            'kegiatan_laporan_id': kegiatan_laporan.id
+        })
+        
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Invalid JSON data'
+        }, status=400)
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=500)
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def upload_laporan_images(request):
+    """API untuk upload foto laporan"""
+    try:
+        laporan_id = request.POST.get('laporan_id')
+        if not laporan_id:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'laporan_id is required'
+            }, status=400)
+        
+        try:
+            laporan = Laporan.objects.get(id=laporan_id)
+            # Ambil kegiatan laporan terbaru untuk laporan ini
+            kegiatan_laporan = KegiatanLaporan.objects.filter(laporan=laporan).last()
+            if not kegiatan_laporan:
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'Kegiatan laporan tidak ditemukan'
+                }, status=404)
+        except Laporan.DoesNotExist:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Laporan tidak ditemukan'
+            }, status=404)
+        
+        images = request.FILES.getlist('images')
+        if not images:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'No images provided'
+            }, status=400)
+        
+        uploaded_files = []
+        allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
+        max_size = 5 * 1024 * 1024  # 5MB
+        
+        for image in images:
+            # Validasi file
+            if not image.content_type in allowed_types:
+                continue
+            
+            if image.size > max_size:
+                continue
+                
+            # Simpan file
+            try:
+                foto = KegiatanFoto.objects.create(
+                    kegiatan=kegiatan_laporan,
+                    foto=image
+                )
+                uploaded_files.append({
+                    'id': foto.id,
+                    'url': request.build_absolute_uri(foto.foto.url) if foto.foto else None
+                })
+            except Exception as e:
+                continue
+        
+        return JsonResponse({
+            'status': 'success',
+            'message': f'{len(uploaded_files)} foto berhasil diupload',
+            'files': uploaded_files
+        })
+        
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=500)
+
+@csrf_exempt
+@require_http_methods(["GET"])
+def get_laporan_list(request):
+    """API untuk mendapatkan daftar laporan"""
+    try:
+        laporan_list = Laporan.objects.all().order_by('-tanggal_proses')
+        data = []
+        
+        for laporan in laporan_list:
+            kegiatan_list = []
+            for kegiatan in laporan.kegiatan_list.all():
+                foto_list = []
+                for foto in kegiatan.foto_list.all():
+                    foto_list.append({
+                        'id': foto.id,
+                        'url': request.build_absolute_uri(foto.foto.url) if foto.foto else None
+                    })
+                
+                kegiatan_list.append({
+                    'id': kegiatan.id,
+                    'kegiatan': kegiatan.get_kegiatan_display_name(),
+                    'kegiatan_other': kegiatan.kegiatan_other,
+                    'remark': kegiatan.remark,
+                    'foto': kegiatan.foto.url if kegiatan.foto else None,
+                    'foto_list': foto_list
+                })
+            
+            data.append({
+                'id': laporan.id,
+                'lokasi': laporan.lokasi,
+                'nama_team_support': laporan.nama_team_support,
+                'tanggal_proses': laporan.tanggal_proses.isoformat(),
+                'no_document': laporan.no_document,
+                'kegiatan_list': kegiatan_list
+            })
+        
+        return JsonResponse(data, safe=False)
+        
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=500)
+
 
 def laporan_form_view(request):
     if request.method == 'POST':
