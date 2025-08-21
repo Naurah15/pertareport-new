@@ -289,3 +289,134 @@ def manage_jenis_kegiatan(request):
         "form": form,
         "kegiatan_list": kegiatan_list
     })
+
+# Tambahkan ke views.py Anda
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def add_kegiatan_to_laporan(request):
+    """API untuk menambah kegiatan ke laporan yang sudah ada"""
+    try:
+        data = json.loads(request.body)
+        
+        # Validasi data yang diperlukan
+        required_fields = ['laporan_id', 'remark', 'kegiatan_id']
+        for field in required_fields:
+            if field not in data or not str(data[field]).strip():
+                return JsonResponse({
+                    'status': 'error',
+                    'message': f'Field {field} is required'
+                }, status=400)
+        
+        # Cari laporan
+        try:
+            laporan = Laporan.objects.get(id=data['laporan_id'])
+        except Laporan.DoesNotExist:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Laporan tidak ditemukan'
+            }, status=404)
+        
+        # Cari jenis kegiatan
+        try:
+            jenis_kegiatan = JenisKegiatan.objects.get(id=data['kegiatan_id'])
+        except JenisKegiatan.DoesNotExist:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Jenis kegiatan tidak ditemukan'
+            }, status=400)
+        
+        # Handle kegiatan_other
+        kegiatan_other = data.get('kegiatan_other', '').strip() if data.get('kegiatan_other') else ''
+        
+        # Tambah kegiatan baru ke laporan yang sudah ada
+        kegiatan_laporan = KegiatanLaporan.objects.create(
+            laporan=laporan,
+            kegiatan=jenis_kegiatan,
+            kegiatan_other=kegiatan_other,
+            remark=data['remark'].strip()
+        )
+        
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Kegiatan berhasil ditambahkan ke laporan',
+            'laporan_id': laporan.id,
+            'no_document': laporan.no_document,
+            'kegiatan_laporan_id': kegiatan_laporan.id
+        })
+        
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Invalid JSON data'
+        }, status=400)
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=500)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def upload_kegiatan_images(request):
+    """API untuk upload foto ke kegiatan laporan tertentu"""
+    try:
+        kegiatan_laporan_id = request.POST.get('kegiatan_laporan_id')
+        if not kegiatan_laporan_id:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'kegiatan_laporan_id is required'
+            }, status=400)
+        
+        try:
+            kegiatan_laporan = KegiatanLaporan.objects.get(id=kegiatan_laporan_id)
+        except KegiatanLaporan.DoesNotExist:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Kegiatan laporan tidak ditemukan'
+            }, status=404)
+        
+        images = request.FILES.getlist('images')
+        if not images:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'No images provided'
+            }, status=400)
+        
+        uploaded_files = []
+        allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
+        max_size = 5 * 1024 * 1024  # 5MB
+        
+        for image in images:
+            # Validasi file
+            if not image.content_type in allowed_types:
+                continue
+            
+            if image.size > max_size:
+                continue
+                
+            # Simpan file
+            try:
+                foto = KegiatanFoto.objects.create(
+                    kegiatan=kegiatan_laporan,
+                    foto=image
+                )
+                uploaded_files.append({
+                    'id': foto.id,
+                    'url': request.build_absolute_uri(foto.foto.url) if foto.foto else None
+                })
+            except Exception as e:
+                continue
+        
+        return JsonResponse({
+            'status': 'success',
+            'message': f'{len(uploaded_files)} foto berhasil diupload',
+            'files': uploaded_files
+        })
+        
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=500)
