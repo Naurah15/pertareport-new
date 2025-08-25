@@ -128,3 +128,5 @@ def update_profile_flutter(request):
         'success': False,
         'error': 'Invalid request method.'
     }, status=405)
+
+

@@ -356,7 +356,6 @@ def add_kegiatan_to_laporan(request):
             'message': str(e)
         }, status=500)
 
-
 @csrf_exempt
 @require_http_methods(["POST"])
 def upload_kegiatan_images(request):
@@ -385,38 +384,62 @@ def upload_kegiatan_images(request):
             }, status=400)
         
         uploaded_files = []
+        skipped_files = []
         allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
         max_size = 5 * 1024 * 1024  # 5MB
         
-        for image in images:
-            # Validasi file
-            if not image.content_type in allowed_types:
+        for i, image in enumerate(images):
+            if image.content_type not in allowed_types:
+                skipped_files.append({'name': image.name, 'reason': f'Invalid type: {image.content_type}'})
                 continue
             
             if image.size > max_size:
+                skipped_files.append({'name': image.name, 'reason': f'Too large: {image.size}'})
                 continue
-                
-            # Simpan file
+
             try:
-                foto = KegiatanFoto.objects.create(
-                    kegiatan=kegiatan_laporan,
-                    foto=image
-                )
-                uploaded_files.append({
-                    'id': foto.id,
-                    'url': request.build_absolute_uri(foto.foto.url) if foto.foto else None
-                })
+                if not kegiatan_laporan.foto:  
+                    # simpan ke field utama (biar web tetap bisa baca)
+                    kegiatan_laporan.foto = image
+                    kegiatan_laporan.save()
+                    uploaded_files.append({
+                        'id': kegiatan_laporan.id,
+                        'url': request.build_absolute_uri(kegiatan_laporan.foto.url),
+                        'name': image.name,
+                        'is_primary': True
+                    })
+                else:
+                    # simpan ke tabel KegiatanFoto (tambahan)
+                    foto = KegiatanFoto.objects.create(
+                        kegiatan=kegiatan_laporan,
+                        foto=image
+                    )
+                    uploaded_files.append({
+                        'id': foto.id,
+                        'url': request.build_absolute_uri(foto.foto.url),
+                        'name': image.name,
+                        'is_primary': False
+                    })
             except Exception as e:
+                skipped_files.append({'name': image.name, 'reason': f'Upload error: {str(e)}'})
                 continue
         
-        return JsonResponse({
+        if not uploaded_files:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'No files were successfully uploaded',
+                'skipped_files': skipped_files
+            }, status=400)
+        
+        response_data = {
             'status': 'success',
             'message': f'{len(uploaded_files)} foto berhasil diupload',
             'files': uploaded_files
-        })
+        }
+        if skipped_files:
+            response_data['skipped_files'] = skipped_files
+        
+        return JsonResponse(response_data)
         
     except Exception as e:
-        return JsonResponse({
-            'status': 'error',
-            'message': str(e)
-        }, status=500)
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
