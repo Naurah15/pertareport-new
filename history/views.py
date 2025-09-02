@@ -13,6 +13,10 @@ from openpyxl.drawing.image import Image as XLImage
 from django.conf import settings
 from openpyxl.utils import get_column_letter
 from reportlab.lib.units import inch
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
+
 
 
 @login_required
@@ -136,6 +140,47 @@ def download_laporan_pdf(request, pk):
     p.showPage()
     p.save()
     return response
+
+
+@csrf_exempt  # Add this if you're having CSRF issues
+def history_list_api(request):
+    # Remove login_required for now to test, add it back later
+    user = request.user if request.user.is_authenticated else None
+    
+    if user and user.username == 'admin' and user.check_password('Mimin1234%'):
+        laporan_list = Laporan.objects.all().order_by('-tanggal_proses')
+    elif user:
+        laporan_list = Laporan.objects.filter(
+            nama_team_support__iexact=user.username
+        ).order_by('-tanggal_proses')
+    else:
+        # For testing - remove this later
+        laporan_list = Laporan.objects.all().order_by('-tanggal_proses')
+
+    data = {
+        "status": "success",
+        "laporan_list": [
+            {
+                "id": laporan.id,
+                "no_document": laporan.no_document,
+                "lokasi": laporan.lokasi,
+                "nama_team_support": laporan.nama_team_support,
+                "tanggal_proses": laporan.tanggal_proses.strftime("%Y-%m-%d %H:%M:%S"),
+                "kegiatan_list": [
+                    {
+                        "display_name": k.get_kegiatan_display_name(),
+                        "remark": k.remark,
+                        "foto": k.foto.url if k.foto else None,
+                    }
+                    for k in laporan.kegiatan_list.all()
+                ],
+            }
+            for laporan in laporan_list
+        ]
+    }
+    return JsonResponse(data, safe=False)
+
+
 
 
 
