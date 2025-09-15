@@ -41,6 +41,7 @@
         .navbar-spacer {
             height: 80px;
         }
+        
         /* Content Styling */
         .content-wrapper {
             max-width: 1200px;
@@ -58,6 +59,172 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.1);
+            border: 1px solid #E5E7EB;
+        }
+
+        .filter-title {
+            color: var(--pertamina-blue);
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .search-bar {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border: 2px solid #E5E7EB;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #F8FAFC;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--pertamina-blue);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(0, 56, 118, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--pertamina-gray);
+        }
+
+        .date-filters {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 1rem;
+            align-items: end;
+            margin-bottom: 1.5rem;
+        }
+
+        .date-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .date-label {
+            font-weight: 600;
+            color: var(--pertamina-dark-gray);
+            font-size: 0.875rem;
+        }
+
+        .date-input {
+            padding: 0.875rem;
+            border: 2px solid #E5E7EB;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #F8FAFC;
+        }
+
+        .date-input:focus {
+            outline: none;
+            border-color: var(--pertamina-blue);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(0, 56, 118, 0.1);
+        }
+
+        .filter-btn {
+            padding: 0.875rem 1.5rem;
+            background: linear-gradient(135deg, var(--pertamina-blue) 0%, var(--pertamina-dark-blue) 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 120px;
+            justify-content: center;
+        }
+
+        .filter-btn:hover {
+            background: linear-gradient(135deg, var(--pertamina-dark-blue) 0%, #001d3d 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(0, 56, 118, 0.3);
+        }
+
+        .bulk-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .bulk-btn {
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            min-width: 160px;
+            justify-content: center;
+        }
+
+        .bulk-btn.excel {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: white;
+        }
+
+        .bulk-btn.excel:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+        }
+
+        .bulk-btn.pdf {
+            background: linear-gradient(135deg, var(--pertamina-red) 0%, var(--pertamina-dark-red) 100%);
+            color: white;
+        }
+
+        .bulk-btn.pdf:hover {
+            background: linear-gradient(135deg, var(--pertamina-dark-red) 0%, #991B1B 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(227, 30, 36, 0.4);
+        }
+
+        /* Results Section */
+        .results-section {
+            margin-top: 2rem;
+        }
+
+        .results-count {
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            color: var(--pertamina-blue);
+            font-weight: 600;
         }
 
         h2 {
@@ -183,15 +350,22 @@
         }
 
         /* Empty state styling */
-        .content-wrapper > p:last-child {
+        .empty-state {
             text-align: center;
             font-size: 1.2rem;
             color: var(--pertamina-gray);
             margin-top: 3rem;
-            padding: 2rem;
+            padding: 3rem 2rem;
             background: white;
             border-radius: 12px;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: var(--pertamina-gray);
+            opacity: 0.5;
         }
 
         /* Floating Animation */
@@ -262,6 +436,23 @@
                 font-size: 2rem;
             }
 
+            .filter-section {
+                padding: 1rem;
+            }
+
+            .date-filters {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .bulk-actions {
+                flex-direction: column;
+            }
+
+            .bulk-btn {
+                min-width: auto;
+            }
+
             h2 {
                 font-size: 1.2rem;
                 flex-direction: column;
@@ -308,64 +499,180 @@
     <div class="content-wrapper">
         <h1>Daftar Laporan</h1>
 
-        {% for laporan in laporan_list %}
-            <h2>
-                <span>
-                {{ laporan.no_document }} - 
-                    <a href="https://www.google.com/maps?q={{ laporan.lokasi }}" target="_blank">
-                        {{ laporan.lokasi }}
-                    </a>
-                </span>
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <div class="filter-title">
+                <i class="fas fa-filter"></i>
+                Filter & Pencarian Laporan
+            </div>
+            
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="searchInput" class="search-input" placeholder="Cari berdasarkan nomor dokumen, lokasi, atau nama team support...">
+            </div>
 
-                <div class="download-links">
-                    <a href="{% url 'history:download_excel' laporan.id %}" class="download-btn excel">
-                        <i class="fas fa-file-excel"></i>
-                        Excel
-                    </a>
-                    <a href="{% url 'history:download_pdf' laporan.id %}" class="download-btn pdf">
-                        <i class="fas fa-file-pdf"></i>
-                        PDF
-                    </a>
+            <!-- Date Filters -->
+            <form method="GET" id="filterForm">
+                <div class="date-filters">
+                    <div class="date-group">
+                        <label class="date-label" for="start_date">Tanggal Mulai</label>
+                        <input type="date" id="start_date" name="start_date" class="date-input" value="{{ request.GET.start_date }}">
+                    </div>
+                    <div class="date-group">
+                        <label class="date-label" for="end_date">Tanggal Selesai</label>
+                        <input type="date" id="end_date" name="end_date" class="date-input" value="{{ request.GET.end_date }}">
+                    </div>
+                    <button type="submit" class="filter-btn">
+                        <i class="fas fa-filter"></i>
+                        Filter
+                    </button>
                 </div>
-            </h2>
-            <p><strong>Nama Team Support:</strong> {{ laporan.nama_team_support }}</p>
-            <p><strong>Tanggal Proses:</strong> {{ laporan.tanggal_proses|date:"d M Y H:i" }}</p>
+            </form>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Jenis Kegiatan</th>
-                        <th>Detail / Remark</th>
-                        <th>Foto</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for kegiatan in laporan.kegiatan_list.all %}
-                        <tr>
-                            <td>{{ kegiatan.get_kegiatan_display_name }}</td>
-                            <td>{{ kegiatan.remark }}</td>
-                            <td>
-                                {% if kegiatan.foto %}
-                                    <img src="{{ kegiatan.foto.url }}" class="foto" alt="Foto Kegiatan">
-                                {% else %}
-                                    Tidak ada foto
-                                {% endif %}
-                            </td>
-                        </tr>
-                    {% empty %}
-                        <tr>
-                            <td colspan="3">Tidak ada kegiatan yang tercatat.</td>
-                        </tr>
+            <!-- Bulk Download Actions -->
+            {% if laporan_list %}
+            <div class="bulk-actions">
+                <a href="{% url 'history:bulk_download_excel' %}?{{ request.GET.urlencode }}" class="bulk-btn excel">
+                    <i class="fas fa-file-excel"></i>
+                    Download All Excel
+                </a>
+                <a href="{% url 'history:bulk_download_pdf' %}?{{ request.GET.urlencode }}" class="bulk-btn pdf">
+                    <i class="fas fa-file-pdf"></i>
+                    Download All PDF
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section">
+            {% if laporan_list %}
+                <div class="results-count">
+                    <i class="fas fa-list-alt"></i>
+                    Menampilkan {{ laporan_list|length }} laporan
+                    {% if request.GET.start_date or request.GET.end_date %}
+                        {% if request.GET.start_date and request.GET.end_date %}
+                            dari {{ request.GET.start_date }} sampai {{ request.GET.end_date }}
+                        {% elif request.GET.start_date %}
+                            dari {{ request.GET.start_date }}
+                        {% elif request.GET.end_date %}
+                            sampai {{ request.GET.end_date }}
+                        {% endif %}
+                    {% endif %}
+                </div>
+
+                <div id="laporanContainer">
+                    {% for laporan in laporan_list %}
+                        <div class="laporan-item" data-search="{{ laporan.no_document|lower }} {{ laporan.lokasi|lower }} {{ laporan.nama_team_support|lower }}">
+                            <h2>
+                                <span>
+                                {{ laporan.no_document }} - 
+                                    <a href="https://www.google.com/maps?q={{ laporan.lokasi }}" target="_blank">
+                                        {{ laporan.lokasi }}
+                                    </a>
+                                </span>
+
+                                <div class="download-links">
+                                    <a href="{% url 'history:download_excel' laporan.id %}" class="download-btn excel">
+                                        <i class="fas fa-file-excel"></i>
+                                        Excel
+                                    </a>
+                                    <a href="{% url 'history:download_pdf' laporan.id %}" class="download-btn pdf">
+                                        <i class="fas fa-file-pdf"></i>
+                                        PDF
+                                    </a>
+                                </div>
+                            </h2>
+                            <p><strong>Nama Team Support:</strong> {{ laporan.nama_team_support }}</p>
+                            <p><strong>Tanggal Proses:</strong> {{ laporan.tanggal_proses|date:"d M Y H:i" }}</p>
+
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Jenis Kegiatan</th>
+                                        <th>Detail / Remark</th>
+                                        <th>Foto</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for kegiatan in laporan.kegiatan_list.all %}
+                                        <tr>
+                                            <td>{{ kegiatan.get_kegiatan_display_name }}</td>
+                                            <td>{{ kegiatan.remark }}</td>
+                                            <td>
+                                                {% if kegiatan.foto %}
+                                                    <img src="{{ kegiatan.foto.url }}" class="foto" alt="Foto Kegiatan">
+                                                {% else %}
+                                                    Tidak ada foto
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr>
+                                            <td colspan="3">Tidak ada kegiatan yang tercatat.</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     {% endfor %}
-                </tbody>
-            </table>
-        {% empty %}
-            <p>Tidak ada laporan yang tersedia.</p>
-        {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <h3>Tidak ada laporan yang ditemukan</h3>
+                    <p>{% if request.GET.start_date or request.GET.end_date %}Coba ubah filter tanggal atau hapus filter untuk melihat semua laporan.{% else %}Belum ada laporan yang tersedia.{% endif %}</p>
+                </div>
+            {% endif %}
+        </div>
     </div>
 
     <script>
-        // Any additional JavaScript can go here if needed
+        // Real-time search functionality
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const laporanItems = document.querySelectorAll('.laporan-item');
+            
+            laporanItems.forEach(function(item) {
+                const searchData = item.getAttribute('data-search');
+                if (searchData.includes(searchTerm)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            // Update results count
+            const visibleItems = document.querySelectorAll('.laporan-item[style*="block"], .laporan-item:not([style*="none"])').length;
+            const resultsCount = document.querySelector('.results-count');
+            if (resultsCount) {
+                resultsCount.innerHTML = `<i class="fas fa-search"></i> Menampilkan ${visibleItems} laporan dari hasil pencarian "${searchTerm}"`;
+            }
+        });
+
+        // Auto-submit form when dates change
+        document.getElementById('start_date').addEventListener('change', function() {
+            document.getElementById('filterForm').submit();
+        });
+
+        document.getElementById('end_date').addEventListener('change', function() {
+            document.getElementById('filterForm').submit();
+        });
+
+        // Smooth animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const laporanItems = document.querySelectorAll('.laporan-item');
+            laporanItems.forEach((item, index) => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    item.style.transition = 'all 0.5s ease';
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
     </script>
 </body>
 </html>
