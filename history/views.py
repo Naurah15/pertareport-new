@@ -357,6 +357,9 @@ def bulk_download_excel(request):
                     ws.cell(row=current_row, column=4, value=kegiatan.get_kegiatan_display_name())
                     ws.cell(row=current_row, column=5, value=kegiatan.remark)
                     
+                    # --- Mulai kolom foto tambahan ---
+                    foto_col = 7   # kolom G untuk foto tambahan
+
                     # Foto utama
                     if kegiatan.foto:
                         img_path = os.path.join(settings.MEDIA_ROOT, str(kegiatan.foto))
@@ -364,9 +367,9 @@ def bulk_download_excel(request):
                             img = XLImage(img_path)
                             img.width = 200
                             img.height = 150
-                            ws.add_image(img, f"F{current_row}")
-                            ws.row_dimensions[current_row].height = 120      # ✅ tinggi baris
-                            for c_idx in range(1, 8):                        # ✅ teks tengah vertikal
+                            ws.add_image(img, f"F{current_row}")   # kolom F
+                            ws.row_dimensions[current_row].height = 120
+                            for c_idx in range(1, 8):
                                 ws.cell(row=current_row, column=c_idx).alignment = Alignment(
                                     vertical="center", horizontal="center", wrap_text=True
                                 )
@@ -379,7 +382,7 @@ def bulk_download_excel(request):
                             img.width = 200
                             img.height = 150
                             ws.add_image(img, f"{get_column_letter(foto_col)}{current_row}")
-                            ws.row_dimensions[current_row].height = 120      # ✅ set tinggi sama
+                            ws.row_dimensions[current_row].height = 120
                             foto_col += 1
 
                     current_row += 1
