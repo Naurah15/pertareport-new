@@ -286,7 +286,7 @@
         @media (max-width: 768px) {
             .main-container {
                 margin-left: 1rem;
-                margin-right: 1rem;
+                margin-right: 1rem; 
             }
             
             .card-body {
@@ -363,22 +363,41 @@
                         <h4><i class="fas fa-user"></i>Informasi Team</h4>
                         <div class="mb-3">
                             <label class="form-label">Nama Team Support</label>
-                            {{ form.nama_team_support }}
-                            <div class="form-text">Masukkan nama lengkap team support yang bertugas</div>
+                            <input type="text" name="nama_team_support" class="form-control" 
+                                value="{{ username }}" readonly>
+                            <div class="form-text">Nama diambil dari user yang sedang login</div>
                         </div>
-                    </div>
+                        <div class="mb-3">
+                            <label class="form-label">SPBU</label>
+                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                <div style="flex: 1;">
+                                    {{ form.spbu }}
+                                </div>
 
+                                {% if user.username == "admin" %}
+                                <a href="{% url 'report:manage_spbu' %}" class="manage-kegiatan-btn" 
+                                style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); white-space: nowrap;">
+                                    <i class="fas fa-gas-pump"></i>
+                                    Kelola SPBU
+                                </a>
+                                {% endif %}
+                            </div>
+                            <div class="form-text">Pilih SPBU tempat kegiatan dilakukan</div>
+                        </div>
+                        
                     <!-- Kegiatan Section -->
                     <div class="form-section">
                         <h4><i class="fas fa-tasks"></i>Daftar Kegiatan</h4>
                         
                         {% if user.username == "admin" %}
-                            <a href="{% url 'report:manage_jenis_kegiatan' %}" class="manage-kegiatan-btn">
-                                <i class="fas fa-cog"></i>
-                                Kelola Jenis Kegiatan
-                            </a>
+                            <div style="display: flex; gap: 10px; margin-bottom: 1rem; flex-wrap: wrap;">
+                                <a href="{% url 'report:manage_jenis_kegiatan' %}" class="manage-kegiatan-btn">
+                                    <i class="fas fa-cog"></i>
+                                    Kelola Jenis Kegiatan
+                                </a>
+                            </div>
                         {% endif %}
-                        
+                                            
                         <div id="kegiatan-container">
                             {% for form in kegiatan_formset %}
                                 <div class="kegiatan-item" data-form-index="{{ forloop.counter0 }}">

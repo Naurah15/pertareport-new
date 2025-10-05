@@ -1,14 +1,34 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
+
+class SPBU(models.Model):
+    nama = models.CharField(max_length=200)
+    kode = models.CharField(max_length=50, unique=True)
+    alamat = models.TextField(blank=True, null=True)
+    
+    class Meta:
+        ordering = ['kode']
+        verbose_name = 'SPBU'
+        verbose_name_plural = 'SPBU'
+    
+    def __str__(self):
+        return f"{self.kode} - {self.nama}"
 
 class JenisKegiatan(models.Model):
     nama = models.CharField(max_length=100, unique=True)
-
+    
+    class Meta:
+        verbose_name = 'Jenis Kegiatan'
+        verbose_name_plural = 'Jenis Kegiatan'
+    
     def __str__(self):
         return self.nama
 
 
 class Laporan(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    spbu = models.ForeignKey(SPBU, on_delete=models.SET_NULL, null=True, blank=True)
     lokasi = models.CharField(max_length=200)  # Tag lokasi dari geo
     nama_team_support = models.CharField(max_length=200)
     tanggal_proses = models.DateTimeField(default=timezone.now)

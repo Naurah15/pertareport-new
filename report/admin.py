@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import Laporan, KegiatanLaporan
+from .models import SPBU
 
 class KegiatanLaporanInline(admin.TabularInline):
     model = KegiatanLaporan
@@ -12,7 +13,7 @@ class KegiatanLaporanInline(admin.TabularInline):
 
 @admin.register(Laporan)
 class LaporanAdmin(admin.ModelAdmin):
-    list_display = ['no_document', 'nama_team_support', 'lokasi', 'tanggal_proses']
+    list_display = ['no_document', 'nama_team_support', 'spbu', 'lokasi', 'tanggal_proses']
     list_filter = ['tanggal_proses']
     search_fields = ['no_document', 'nama_team_support', 'lokasi']
     readonly_fields = ['no_document', 'tanggal_proses']
@@ -46,3 +47,9 @@ class KegiatanLaporanAdmin(admin.ModelAdmin):
     def get_kegiatan_display_name(self, obj):
         return obj.get_kegiatan_display_name()
     get_kegiatan_display_name.short_description = 'Kegiatan'
+
+@admin.register(SPBU)
+class SPBUAdmin(admin.ModelAdmin):
+    list_display = ['kode', 'nama', 'alamat']
+    search_fields = ['nama', 'kode', 'alamat']
+    ordering = ['kode']

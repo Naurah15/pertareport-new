@@ -1,16 +1,23 @@
 from django import forms
-from .models import Laporan, KegiatanLaporan, JenisKegiatan
+from .models import SPBU, Laporan, KegiatanLaporan, JenisKegiatan
 
 class LaporanForm(forms.ModelForm):
     class Meta:
         model = Laporan
-        fields = ['nama_team_support']
+        fields = ['nama_team_support', 'spbu']
         widgets = {
+            'spbu': forms.Select(attrs={
+                'class': 'form-control',
+            }),
             'nama_team_support': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Masukkan nama team support'
+                'readonly': 'readonly'
             })
         }
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.fields['spbu'].empty_label = "Pilih SPBU..."
+            self.fields['spbu'].queryset = SPBU.objects.all().order_by('kode')
 
 class KegiatanForm(forms.ModelForm):
     class Meta:

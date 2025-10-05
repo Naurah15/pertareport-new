@@ -1,0 +1,563 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+{% include 'navbar.html' %}
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola SPBU - PertaReport</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --pertamina-red: #E31E24;
+            --pertamina-dark-red: #B91C1C;
+            --pertamina-blue: #003876;
+            --pertamina-dark-blue: #002855;
+            --pertamina-gray: #6B7280;
+            --pertamina-light-gray: #F8FAFC;
+            --pertamina-dark-gray: #374151;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--pertamina-light-gray) 0%, #E5E7EB 100%);
+            min-height: 100vh;
+            color: var(--pertamina-dark-gray);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(227, 30, 36, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 56, 118, 0.05) 0%, transparent 50%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .page-title {
+            margin-top: 100px;
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--pertamina-blue);
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .page-title::after {
+            content: '';
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--pertamina-red), var(--pertamina-blue));
+            display: block;
+            margin: 15px auto 0;
+            border-radius: 2px;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--pertamina-gray);
+            margin-bottom: 40px;
+            font-style: italic;
+            position: relative;
+            z-index: 2;
+        }
+
+        .main-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 50px 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .management-card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            border: 1px solid #E5E7EB;
+            position: relative;
+            animation: slideInUp 0.8s ease-out;
+            margin-bottom: 30px;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--pertamina-blue) 0%, var(--pertamina-dark-blue) 100%);
+            color: white;
+            padding: 30px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 70%, rgba(227, 30, 36, 0.1) 0%, transparent 50%);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-description {
+            font-size: 1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-content {
+            padding: 40px;
+            background: #FEFEFE;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: var(--pertamina-blue);
+            margin-bottom: 10px;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #E5E7EB;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: inherit;
+            background: #FEFEFE;
+            transition: all 0.3s ease;
+            color: var(--pertamina-dark-gray);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--pertamina-red);
+            box-shadow: 0 0 0 4px rgba(227, 30, 36, 0.1);
+            background: white;
+        }
+
+        textarea.form-input {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--pertamina-red) 0%, var(--pertamina-dark-red) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 12px rgba(227, 30, 36, 0.3);
+            width: 100%;
+            justify-content: center;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(227, 30, 36, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+        }
+
+        .activity-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .activity-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 20px;
+            border: 1px solid #E5E7EB;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            background: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .activity-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            border-color: var(--pertamina-red);
+        }
+
+        .spbu-info {
+            flex: 1;
+        }
+
+        .activity-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--pertamina-dark-gray);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 8px;
+        }
+
+        .activity-name::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--pertamina-red);
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .spbu-details {
+            font-size: 0.9rem;
+            color: var(--pertamina-gray);
+            display: flex;
+            align-items: start;
+            gap: 0.5rem;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+
+        .spbu-details i {
+            margin-top: 3px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--pertamina-gray);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--pertamina-blue);
+        }
+
+        .empty-state p {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            color: #065F46;
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #A7F3D0;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .error-message {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            color: #991B1B;
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #FECACA;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .floating-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(227, 30, 36, 0.05);
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .floating-circle:nth-child(1) {
+            width: 60px;
+            height: 60px;
+            top: 15%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-circle:nth-child(2) {
+            width: 80px;
+            height: 80px;
+            top: 70%;
+            right: 15%;
+            animation-delay: 3s;
+            background: rgba(0, 56, 118, 0.05);
+        }
+
+        .floating-circle:nth-child(3) {
+            width: 40px;
+            height: 40px;
+            top: 50%;
+            left: 5%;
+            animation-delay: 6s;
+        }
+
+        @keyframes float {
+            0%, 100% { 
+                transform: translateY(0px) translateX(0px); 
+                opacity: 0.7;
+            }
+            33% { 
+                transform: translateY(-15px) translateX(10px); 
+                opacity: 1;
+            }
+            66% { 
+                transform: translateY(10px) translateX(-5px); 
+                opacity: 0.8;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 30px 15px;
+            }
+
+            .card-content {
+                padding: 30px 20px;
+            }
+
+            .page-title {
+                font-size: 2rem;
+                margin-top: 80px;
+            }
+
+            .activity-item {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .spbu-info {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-elements">
+        <div class="floating-circle"></div>
+        <div class="floating-circle"></div>
+        <div class="floating-circle"></div>
+    </div>
+
+    <h2 class="page-title">Kelola SPBU</h2>
+    <p class="subtitle">Tambah dan kelola daftar SPBU di PertaReport</p>
+
+    <div class="main-container">
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                    <div class="success-message">
+                        <i class="fas fa-check-circle"></i>
+                        <span>{{ message }}</span>
+                    </div>
+                {% else %}
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span>{{ message }}</span>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
+        <!-- Form Card -->
+        <div class="management-card">
+            <div class="card-header">
+                <div class="card-icon">
+                    <i class="fas fa-gas-pump"></i>
+                </div>
+                <div class="card-title">Tambah SPBU Baru</div>
+                <div class="card-description">Masukkan data SPBU yang ingin ditambahkan</div>
+            </div>
+            <div class="card-content">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-barcode"></i>
+                            Kode SPBU
+                        </label>
+                        <input type="text" name="kode" class="form-input" 
+                               placeholder="Contoh: 34.123.45" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-building"></i>
+                            Nama SPBU
+                        </label>
+                        <input type="text" name="nama" class="form-input" 
+                               placeholder="Contoh: SPBU Bekasi Timur" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Alamat (Opsional)
+                        </label>
+                        <textarea name="alamat" class="form-input" rows="3"
+                                  placeholder="Masukkan alamat lengkap SPBU..."></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-plus"></i>
+                        Tambah SPBU
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- List Card -->
+        <div class="management-card">
+            <div class="card-header">
+                <div class="card-icon">
+                    <i class="fas fa-list-alt"></i>
+                </div>
+                <div class="card-title">Daftar SPBU</div>
+                <div class="card-description">Kelola semua SPBU yang tersedia</div>
+            </div>
+            <div class="card-content">
+                {% if spbu_list %}
+                    <ul class="activity-list">
+                    {% for item in spbu_list %}
+                        <li class="activity-item">
+                            <div class="spbu-info">
+                                <span class="activity-name">{{ item.kode }} - {{ item.nama }}</span>
+                                {% if item.alamat %}
+                                <div class="spbu-details">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>{{ item.alamat }}</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <form method="post" style="display:inline;" onsubmit="return confirmDelete('{{ item.nama }}')">
+                                {% csrf_token %}
+                                <input type="hidden" name="delete_id" value="{{ item.id }}">
+                                <button type="submit" class="btn-danger">
+                                    <i class="fas fa-trash"></i>
+                                    Hapus
+                                </button>
+                            </form>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-gas-pump"></i>
+                        <h3>Belum Ada SPBU</h3>
+                        <p>Tambahkan SPBU pertama Anda menggunakan form di atas</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function confirmDelete(nama) {
+            return confirm(`Apakah Anda yakin ingin menghapus SPBU "${nama}"?`);
+        }
+    </script>
+</body>
+</html>
+{% include 'footer.html' %}
+{% endblock content %}

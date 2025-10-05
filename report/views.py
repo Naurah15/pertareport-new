@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.contrib import messages
 from .forms import LaporanForm, KegiatanFormSet
-from .models import Laporan
+from .models import SPBU, Laporan
 from django.contrib.auth.decorators import login_required
 from .forms import JenisKegiatanForm
 from django.http import JsonResponse
@@ -51,10 +51,19 @@ def create_laporan(request):
                     'message': f'Field {field} is required'
                 }, status=400)
         
+        spbu_id = data.get('spbu_id')
+        spbu_obj = None
+        if spbu_id:
+            try:
+                spbu_obj = SPBU.objects.get(id=spbu_id)
+            except SPBU.DoesNotExist:
+                pass
+
         # Buat laporan baru
         laporan = Laporan.objects.create(
             lokasi=data['lokasi'].strip(),
-            nama_team_support=data['nama_team_support'].strip()
+            nama_team_support=data['nama_team_support'].strip(),
+            spbu=spbu_obj 
         )
         
         # Buat kegiatan laporan
@@ -221,6 +230,7 @@ def laporan_form_view(request):
             laporan = form.save(commit=False)
             laporan.lokasi = lokasi
             laporan.tanggal_proses = timezone.now()
+            laporan.user = request.user  # Tambah ini
             laporan.save()
             
             # Process kegiatan formset
@@ -258,7 +268,8 @@ def laporan_form_view(request):
     return render(request, 'laporan_form.html', {
         'form': form,
         'kegiatan_formset': kegiatan_formset,
-        'preview_no_document': preview_no_document
+        'preview_no_document': preview_no_document,
+        'username': request.user.username if request.user.is_authenticated else ''
     })
 
 def laporan_success_view(request):
@@ -443,3 +454,52 @@ def upload_kegiatan_images(request):
         
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+@login_required
+def manage_spbu(request):
+    if request.user.username != "admin":
+        messages.error(request, "Anda tidak punya akses.")
+        return redirect('report:laporan_form')
+
+    if request.method == "POST":
+        if 'delete_id' in request.POST:
+            SPBU.objects.filter(id=request.POST['delete_id']).delete()
+            messages.success(request, "SPBU berhasil dihapus.")
+            return redirect('report:manage_spbu')
+        else:
+            # Tambah SPBU baru
+            nama = request.POST.get('nama')
+            kode = request.POST.get('kode')
+            alamat = request.POST.get('alamat', '')
+            
+            if nama and kode:
+                SPBU.objects.create(nama=nama, kode=kode, alamat=alamat)
+                messages.success(request, "SPBU berhasil ditambahkan.")
+                return redirect('report:manage_spbu')
+
+    spbu_list = SPBU.objects.all()
+    return render(request, "manage_spbu.html", {
+        "spbu_list": spbu_list
+    })
+
+@csrf_exempt
+@require_http_methods(["GET"])
+def get_spbu_list(request):
+    """API untuk mendapatkan daftar SPBU"""
+    try:
+        spbu_list = SPBU.objects.all().order_by('kode')
+        data = []
+        for spbu in spbu_list:
+            data.append({
+                'id': spbu.id,
+                'nama': spbu.nama,
+                'kode': spbu.kode,
+                'alamat': spbu.alamat
+            })
+        
+        return JsonResponse(data, safe=False)
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=500)
