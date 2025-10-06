@@ -586,10 +586,18 @@
                             </h2>
                             <p><strong>Nama Team Support:</strong> {{ laporan.nama_team_support }}</p>
                             <p><strong>Tanggal Proses:</strong> {{ laporan.tanggal_proses|date:"d M Y H:i" }}</p>
+                            
+                            {% if laporan.spbu %}
+                            <p><strong>SPBU:</strong> {{ laporan.spbu.kode }} - {{ laporan.spbu.nama }}</p>
+                                {% if laporan.spbu.alamat %}
+                                <p><strong>Alamat SPBU:</strong> {{ laporan.spbu.alamat }}</p>
+                                {% endif %}
+                            {% endif %}
 
                             <table>
                                 <thead>
                                     <tr>
+                                        <th>SPBU</th>
                                         <th>Jenis Kegiatan</th>
                                         <th>Detail / Remark</th>
                                         <th>Foto</th>

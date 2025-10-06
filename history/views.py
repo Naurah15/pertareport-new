@@ -96,7 +96,12 @@ def download_laporan_excel(request, pk):
     ws.append(["No Document", laporan.no_document])
     coord = (laporan.lokasi or "").strip()
     ws.append(["Lokasi", coord])
-    # ambil koordinat lalu jadikan hyperlink langsung ke Google Maps
+    if laporan.spbu:
+        ws.append(["SPBU", f"{laporan.spbu.kode} - {laporan.spbu.nama}"])
+        if laporan.spbu.alamat:
+            ws.append(["Alamat SPBU", laporan.spbu.alamat])
+    else:
+        ws.append(["SPBU", "Tidak ada"])
     ws["B4"].hyperlink = f"https://www.google.com/maps/search/?api=1&query={urllib.parse.quote(coord)}"
     ws["B4"].style = "Hyperlink"
 
@@ -188,6 +193,16 @@ def download_laporan_pdf(request, pk):
     p.linkURL(f"https://www.google.com/maps?q={laporan.lokasi}", (150, y-2, 400, y+10))
     p.drawString(150, y, laporan.lokasi)
     y -= 20
+
+    if laporan.spbu:
+        p.drawString(100, y, f"SPBU: {laporan.spbu.kode} - {laporan.spbu.nama}")
+        y -= 20
+        if laporan.spbu.alamat:
+            p.drawString(100, y, f"Alamat SPBU: {laporan.spbu.alamat}")
+            y -= 20
+    else:
+        p.drawString(100, y, "SPBU: Tidak ada")
+        y -= 20
 
     p.drawString(100, y, f"Nama Team Support: {laporan.nama_team_support}")
     y -= 20
@@ -331,7 +346,7 @@ def bulk_download_excel(request):
         current_row += 2
 
         # Headers
-        headers = ["No Document", "Lokasi", "Tanggal", "Jenis Kegiatan", "Remark", "Foto", "Foto Tambahan"]
+        headers = ["No Document", "SPBU", "Lokasi", "Tanggal", "Jenis Kegiatan", "Remark", "Foto", "Foto Tambahan"]
         for col, header in enumerate(headers, 1):
             cell = ws.cell(row=current_row, column=col, value=header)
             cell.font = header_font
@@ -347,15 +362,17 @@ def bulk_download_excel(request):
             if kegiatan_list:
                 for idx, kegiatan in enumerate(kegiatan_list):
                     ws.cell(row=current_row, column=1, value=laporan.no_document)
-                    loc_cell = ws.cell(row=current_row, column=2, value=laporan.lokasi)
+                    spbu_text = f"{laporan.spbu.kode} - {laporan.spbu.nama}" if laporan.spbu else "Tidak ada"
+                    ws.cell(row=current_row, column=2, value=spbu_text)
+                    loc_cell = ws.cell(row=current_row, column=3, value=laporan.lokasi)
                     loc_cell.hyperlink = f"https://www.google.com/maps/search/?api=1&query={urllib.parse.quote(laporan.lokasi)}"
                     loc_cell.style = "Hyperlink"
 
-                    ws.cell(row=current_row, column=3, value=laporan.tanggal_proses.strftime("%d-%m-%Y %H:%M"))
+                    ws.cell(row=current_row, column=4, value=laporan.tanggal_proses.strftime("%d-%m-%Y %H:%M"))
                     
                     # Kegiatan info
-                    ws.cell(row=current_row, column=4, value=kegiatan.get_kegiatan_display_name())
-                    ws.cell(row=current_row, column=5, value=kegiatan.remark)
+                    ws.cell(row=current_row, column=5, value=kegiatan.get_kegiatan_display_name())
+                    ws.cell(row=current_row, column=6, value=kegiatan.remark)
                     
                     # --- Mulai kolom foto tambahan ---
                     foto_col = 7   # kolom G untuk foto tambahan
@@ -389,20 +406,24 @@ def bulk_download_excel(request):
             else:
                 # Laporan without kegiatan
                 ws.cell(row=current_row, column=1, value=laporan.no_document)
-                loc_cell = ws.cell(row=current_row, column=2, value=laporan.lokasi)
+
+                spbu_text = f"{laporan.spbu.kode} - {laporan.spbu.nama}" if laporan.spbu else "Tidak ada"
+                ws.cell(row=current_row, column=2, value=spbu_text)
+
+                loc_cell = ws.cell(row=current_row, column=3, value=laporan.lokasi)
                 loc_cell.hyperlink = f"https://www.google.com/maps/search/?api=1&query={urllib.parse.quote(laporan.lokasi)}"
                 loc_cell.style = "Hyperlink"
 
-                ws.cell(row=current_row, column=3, value=laporan.tanggal_proses.strftime("%d-%m-%Y %H:%M"))
-                ws.cell(row=current_row, column=4, value="Tidak ada kegiatan")
+                ws.cell(row=current_row, column=4, value=laporan.tanggal_proses.strftime("%d-%m-%Y %H:%M"))
+                ws.cell(row=current_row, column=5, value="Tidak ada kegiatan")
                 current_row += 1
-            
+
             current_row += 1  # Space between laporan
 
         current_row += 2  # Space between teams
 
     # Adjust column widths
-    column_widths = {'A': 20, 'B': 30, 'C': 18, 'D': 25, 'E': 40, 'F': 25, 'G': 25}
+    column_widths = {'A': 20, 'B': 25, 'C': 30, 'D': 18, 'E': 25, 'F': 40, 'G': 25, 'H': 25}
     for col, width in column_widths.items():
         ws.column_dimensions[col].width = width
 
@@ -541,6 +562,14 @@ def bulk_download_pdf(request):
             p.setFont("Helvetica", 12)
             p.setFillColor(HexColor('#000000'))
             p.drawString(50, y, f"Lokasi: {lap.lokasi}")
+
+            y -= 15
+            if lap.spbu:
+                p.drawString(50, y, f"SPBU: {lap.spbu.kode} - {lap.spbu.nama}")
+            else:
+                p.drawString(50, y, "SPBU: Tidak ada")
+            y -= 15
+
             y -= 15
             p.drawString(50, y, f"Tanggal: {lap.tanggal_proses.strftime('%d-%m-%Y %H:%M')}")
             y -= 25
@@ -611,6 +640,12 @@ def history_list_api(request):
                 "id": laporan.id,
                 "no_document": laporan.no_document,
                 "lokasi": laporan.lokasi,
+                "spbu": {
+                    "id": laporan.spbu.id,
+                    "kode": laporan.spbu.kode,
+                    "nama": laporan.spbu.nama,
+                    "alamat": laporan.spbu.alamat
+                } if laporan.spbu else None,
                 "nama_team_support": laporan.nama_team_support,
                 "tanggal_proses": laporan.tanggal_proses.strftime("%Y-%m-%d %H:%M:%S"),
                 "kegiatan_list": [

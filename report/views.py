@@ -301,8 +301,6 @@ def manage_jenis_kegiatan(request):
         "kegiatan_list": kegiatan_list
     })
 
-# Tambahkan ke views.py Anda
-
 @csrf_exempt
 @require_http_methods(["POST"])
 def add_kegiatan_to_laporan(request):
