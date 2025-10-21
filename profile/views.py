@@ -3,12 +3,13 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
+import json
 
 @login_required
 def profile_view(request):
     """View untuk menampilkan profil user"""
     user = request.user
-    profile = user.profile  # akses langsung
+    profile = user.user_profile  # PERBAIKI: gunakan user_profile sesuai related_name
 
     context = {
         'user': user,
@@ -26,9 +27,8 @@ def update_profile(request):
     """View untuk update profil user via AJAX"""
     if request.method == 'POST':
         user = request.user
-        profile = user.profile
+        profile = user.user_profile  # PERBAIKI
 
-        # Update email
         email = request.POST.get('email', '').strip()
         if email:
             if User.objects.filter(email=email).exclude(id=user.id).exists():
@@ -40,7 +40,6 @@ def update_profile(request):
         else:
             user.email = ''
 
-        # Update phone number
         phone_number = request.POST.get('phone_number', '').strip()
         profile.phone_number = phone_number
 
@@ -68,7 +67,7 @@ def profile_flutter(request):
     """View untuk Flutter - mendapatkan data profil user"""
     if request.method == 'GET':
         user = request.user
-        profile = user.profile
+        profile = user.user_profile  # PERBAIKI
 
         profile_data = {
             'id': user.id,
@@ -95,9 +94,19 @@ def update_profile_flutter(request):
     """View untuk Flutter - update profil user"""
     if request.method == 'POST':
         user = request.user
-        profile = user.profile
+        profile = user.user_profile  # PERBAIKI
 
-        email = request.POST.get('email', '').strip()
+        # Parse JSON body untuk Flutter
+        try:
+            data = json.loads(request.body)
+            email = data.get('email', '').strip()
+            phone_number = data.get('phone_number', '').strip()
+        except json.JSONDecodeError:
+            return JsonResponse({
+                'success': False,
+                'error': 'Invalid JSON data.'
+            }, status=400)
+
         if email:
             if User.objects.filter(email=email).exclude(id=user.id).exists():
                 return JsonResponse({
@@ -105,10 +114,7 @@ def update_profile_flutter(request):
                     'error': 'Email already used by another user.'
                 }, status=400)
             user.email = email
-        else:
-            user.email = ''
 
-        phone_number = request.POST.get('phone_number', '').strip()
         profile.phone_number = phone_number
 
         try:
@@ -128,5 +134,3 @@ def update_profile_flutter(request):
         'success': False,
         'error': 'Invalid request method.'
     }, status=405)
-
-
