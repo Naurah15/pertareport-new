@@ -96,6 +96,13 @@
         </div>
         
         <h1 class="success-title">Laporan Berhasil Disimpan!</h1>
+
+        {% if no_document %}
+        <p class="success-message fw-semibold text-success">
+            Laporan berhasil disimpan dengan nomor dokumen: 
+            <strong>{{ no_document }}</strong>.
+        </p>
+        {% endif %}
         
         <p class="success-message">
             Terima kasih! Laporan kegiatan SPBU Anda telah berhasil disimpan dalam sistem. 
@@ -106,7 +113,7 @@
             <a href="{% url 'report:laporan_form' %}" class="btn btn-primary">
                 <i class="fas fa-plus me-2"></i>Buat Laporan Baru
             </a>
-            <a href="/" class="btn btn-outline-secondary">
+            <a href="{% url 'main:show_mainpage' %}" class="btn btn-outline-secondary">
                 <i class="fas fa-home me-2"></i>Kembali ke Dashboard
             </a>
         </div>

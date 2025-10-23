@@ -238,8 +238,8 @@ def laporan_form_view(request):
             
             if kegiatan_formset.is_valid():
                 kegiatan_formset.save()
-                messages.success(request, f'Laporan berhasil disimpan dengan nomor dokumen: {laporan.no_document}')
-                return redirect('report:laporan_success')
+                return redirect(f'/report/laporan/success/?no_document={laporan.no_document}')
+
             else:
                 # Jika formset tidak valid, hapus laporan yang sudah dibuat
                 laporan.delete()
@@ -273,7 +273,9 @@ def laporan_form_view(request):
     })
 
 def laporan_success_view(request):
-    return render(request, 'laporan_success.html')
+    no_document = request.GET.get('no_document', None)
+    context = {'no_document': no_document}
+    return render(request, 'laporan_success.html', context)
 
 @login_required
 def manage_jenis_kegiatan(request):
