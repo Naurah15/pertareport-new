@@ -5,7 +5,6 @@ from django.contrib.auth.models import User
 class Profile(models.Model):
     ROLE_CHOICES = [
         ('user', 'User'),
-        ('seller', 'Seller'),
     ]
     
     user = models.OneToOneField(User, on_delete=models.CASCADE)

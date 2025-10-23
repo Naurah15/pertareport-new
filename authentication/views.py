@@ -100,7 +100,7 @@ def register(request):
                     "message": "Username already exists."
                 }, status=400)
 
-            valid_roles = ['user', 'seller']
+            valid_roles = ['user']
             if role not in valid_roles:
                 return JsonResponse({
                     "status": False,
