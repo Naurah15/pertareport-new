@@ -1,0 +1,1 @@
+web: gunicorn pertareport.wsgi
